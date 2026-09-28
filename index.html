@@ -1,975 +1,651 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Northstar Motors - Premier Automotive Dealership</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        darkBg: '#0b0f19',
-                        cardBg: '#111827',
-                        cardBorder: '#1f293d',
-                        accentBlue: '#38bdf8',
-                        accentHover: '#0284c7',
-                        soldRed: '#ef4444'
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Supabase JS Client -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        body {
-            background-color: #0b0f19;
-            color: #f3f4f6;
-            font-family: 'Inter', sans-serif;
-        }
-        .glass-panel {
-            background: rgba(17, 24, 39, 0.85);
-            backdrop-filter: blur(12px);
-            border: 1px solid #1f293d;
-        }
-        .sold-ribbon {
-            position: absolute;
-            top: 16px;
-            right: -32px;
-            transform: rotate(45deg);
-            background-color: #ef4444;
-            color: white;
-            padding: 4px 35px;
-            font-weight: 800;
-            font-size: 0.75rem;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            z-index: 20;
-        }
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0b0f19;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #1f293d;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #334155;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Northstar Chevrolet Cadillac | New & Pre-Owned Vehicles</title>
+<meta name="description" content="Explore Chevrolet and Cadillac vehicles, performance models, SUVs, trucks and premium pre-owned inventory.">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --bg:#07090d; --panel:#10141b; --panel2:#151a22; --text:#f5f7fa; --muted:#9da7b5;
+  --line:rgba(255,255,255,.10); --red:#e31837; --gold:#c9a45b; --white:#fff;
+  --max:1240px; --radius:18px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
+a{text-decoration:none;color:inherit}
+button,input{font:inherit}
+.container{width:min(var(--max),92%);margin:auto}
+.topbar{background:#050608;border-bottom:1px solid var(--line);font-size:13px;color:var(--muted)}
+.topbar .container{display:flex;justify-content:space-between;padding:9px 0}
+nav{position:sticky;top:0;z-index:50;background:rgba(7,9,13,.88);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
+.nav{height:76px;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:12px;font-weight:900;letter-spacing:-.5px}
+.logoMark{display:flex;gap:3px;align-items:center}
+.logoMark span{width:7px;height:30px;background:var(--red);display:block;transform:skew(-12deg)}
+.logoMark span:nth-child(2){height:23px}
+.logoMark span:nth-child(3){height:17px}
+.logoText small{display:block;color:var(--gold);font-size:9px;letter-spacing:2.5px;font-weight:800}
+.links{display:flex;gap:30px;color:#d6dbe2;font-size:14px;font-weight:650}
+.links a:hover{color:white}
+.navActions{display:flex;gap:10px}
+.btn{border:1px solid var(--line);padding:11px 17px;border-radius:999px;font-weight:750;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:.2s}
+.btn:hover{transform:translateY(-2px);border-color:#ffffff55}
+.btn.primary{background:var(--red);border-color:var(--red)}
+.btn.light{background:white;color:#080a0e;border-color:white}
+.btn.gold{background:var(--gold);border-color:var(--gold);color:#090909}
+.menu{display:none;background:none;border:0;color:white;font-size:25px}
+
+.hero{min-height:650px;display:grid;place-items:center;position:relative;overflow:hidden;
+background:
+radial-gradient(circle at 75% 45%,rgba(227,24,55,.24),transparent 29%),
+radial-gradient(circle at 20% 10%,rgba(201,164,91,.11),transparent 28%),
+linear-gradient(115deg,#07090d 25%,#0d1118 65%,#090b10)}
+.hero:before{content:"";position:absolute;inset:auto -5% -18% 25%;height:58%;background:linear-gradient(115deg,transparent 20%,rgba(255,255,255,.055),transparent 70%);transform:skewY(-8deg)}
+.heroContent{position:relative;z-index:2;width:min(var(--max),92%);display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center}
+.eyebrow{color:var(--gold);font-size:12px;font-weight:850;letter-spacing:3px;text-transform:uppercase;margin-bottom:18px}
+h1{font-size:clamp(44px,6vw,82px);line-height:.95;letter-spacing:-4px;max-width:750px}
+.hero p{color:#b5bdc9;font-size:18px;max-width:600px;margin:24px 0 30px}
+.heroButtons{display:flex;gap:12px;flex-wrap:wrap}
+.heroVisual{height:390px;position:relative;display:grid;place-items:center}
+.carShape{width:94%;height:170px;position:relative;background:linear-gradient(150deg,#242a34,#080a0e 70%);border-radius:48% 52% 20% 20%;box-shadow:0 35px 70px rgba(0,0,0,.65),0 0 90px rgba(227,24,55,.14);transform:perspective(600px) rotateX(8deg) rotateY(-9deg)}
+.carShape:before{content:"";position:absolute;width:47%;height:82px;left:27%;top:-53px;background:linear-gradient(150deg,#222936,#07090d);clip-path:polygon(18% 100%,35% 8%,68% 0,87% 100%);border-radius:12px 12px 4px 4px}
+.carShape:after{content:"";position:absolute;left:7%;right:7%;bottom:17px;height:5px;background:linear-gradient(90deg,transparent,var(--red),transparent);box-shadow:0 0 24px var(--red)}
+.wheel{position:absolute;width:56px;height:56px;border-radius:50%;background:#050608;border:8px solid #252a31;bottom:-23px;box-shadow:inset 0 0 0 5px #090b0f}
+.w1{left:15%}.w2{right:15%}
+.badge{position:absolute;top:20px;right:20px;background:rgba(0,0,0,.65);border:1px solid var(--line);padding:13px 16px;border-radius:14px;backdrop-filter:blur(10px)}
+.badge strong{display:block;font-size:18px}.badge span{font-size:11px;color:var(--muted)}
+
+.stats{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:#0b0e13}
+.statsGrid{display:grid;grid-template-columns:repeat(4,1fr)}
+.stat{padding:26px 20px;text-align:center;border-right:1px solid var(--line)}
+.stat:last-child{border:0}.stat strong{font-size:26px}.stat span{display:block;color:var(--muted);font-size:12px;margin-top:3px}
+
+section{padding:90px 0}
+.sectionHead{display:flex;align-items:end;justify-content:space-between;margin-bottom:35px;gap:20px}
+.kicker{color:var(--red);font-weight:900;letter-spacing:2px;font-size:11px;text-transform:uppercase}
+h2{font-size:clamp(32px,4vw,52px);letter-spacing:-2px;line-height:1}
+.sectionHead p{color:var(--muted);max-width:480px}
+
+.brandGrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.brandCard{min-height:270px;border:1px solid var(--line);border-radius:var(--radius);padding:35px;position:relative;overflow:hidden;background:linear-gradient(135deg,#11161d,#090b0f)}
+.brandCard.cad{background:linear-gradient(135deg,#171512,#0c0c0d)}
+.brandCard:after{content:"";position:absolute;width:280px;height:280px;border-radius:50%;right:-80px;bottom:-120px;background:rgba(227,24,55,.12);filter:blur(5px)}
+.brandCard.cad:after{background:rgba(201,164,91,.12)}
+.brandTitle{font-size:42px;font-weight:950;letter-spacing:-2px}
+.brandCard p{color:var(--muted);max-width:420px;margin:12px 0 24px}
+.chev{color:var(--red)}.cadillac{color:#ddd}
+
+.inventory{background:#0b0e13}
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px}
+.filter{padding:10px 18px;border-radius:999px;background:#121720;border:1px solid var(--line);color:#cbd1da;cursor:pointer;transition:.2s;font-weight:600}
+.filter.active,.filter:hover{background:white;color:#080a0e;border-color:white}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;min-height:300px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;transition:.25s;display:flex;flex-direction:column}
+.card:hover{transform:translateY(-5px);border-color:#ffffff25}
+.carImage{height:210px;position:relative;overflow:hidden;background:radial-gradient(circle at 50% 45%,#39414d 0,#171c24 35%,#080a0e 75%)}
+.carImage:before{content:"";position:absolute;left:12%;right:12%;bottom:43px;height:85px;background:linear-gradient(150deg,#303844,#090b0f);border-radius:55% 45% 20% 20%;transform:skewX(-6deg)}
+.carImage:after{content:"";position:absolute;left:21%;right:21%;bottom:36px;height:4px;background:var(--red);box-shadow:0 0 22px rgba(227,24,55,.8)}
+.carMeta{padding:22px;display:flex;flex-direction:column;flex-grow:1}.tag{font-size:10px;color:var(--gold);letter-spacing:1.5px;font-weight:900;text-transform:uppercase}
+.card h3{font-size:25px;margin:6px 0}.specs{display:flex;gap:8px;flex-wrap:wrap;color:var(--muted);font-size:12px}.price{display:flex;justify-content:space-between;align-items:end;margin-top:auto;padding-top:16px}.price strong{font-size:22px}.price span{font-size:11px;color:var(--muted)}
+.no-results{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--muted);background:var(--panel);border:1px dashed var(--line);border-radius:var(--radius)}
+
+.feature{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center}
+.featureVisual{min-height:480px;border-radius:24px;border:1px solid var(--line);position:relative;overflow:hidden;background:radial-gradient(circle at 50% 40%,#343b47,transparent 42%),linear-gradient(145deg,#151a22,#06080b)}
+.featureVisual .ring{position:absolute;width:360px;height:360px;border:1px solid #ffffff18;border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}
+.featureVisual .ring:after{content:"";position:absolute;inset:40px;border:1px solid #ffffff0d;border-radius:50%}
+.featureVisual .center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center}
+.center b{font-size:64px;letter-spacing:-5px}.center small{display:block;color:var(--gold);letter-spacing:3px;font-weight:800}
+.feature h2{margin:12px 0 20px}.feature p{color:var(--muted);font-size:16px;margin-bottom:25px}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin:25px 0}.check{color:#dce1e8;font-size:13px}.check:before{content:"✓";color:var(--red);font-weight:900;margin-right:9px}
+
+.cta{padding:0 0 90px}.ctaBox{border:1px solid var(--line);border-radius:25px;padding:55px;background:linear-gradient(110deg,#171a20,#0c0f14);display:flex;align-items:center;justify-content:space-between;gap:30px;position:relative;overflow:hidden}.ctaBox:after{content:"";position:absolute;width:400px;height:400px;border-radius:50%;right:-180px;top:-220px;background:rgba(227,24,55,.15)}.ctaBox h2{max-width:700px}.ctaBox p{color:var(--muted);margin-top:12px}
+
+footer{border-top:1px solid var(--line);background:#050608;padding:55px 0 25px}.footerGrid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:35px}.footerCol h4{margin-bottom:15px}.footerCol a{display:block;color:var(--muted);font-size:13px;margin:9px 0}.footerCol a:hover{color:white}.copyright{border-top:1px solid var(--line);margin-top:35px;padding-top:20px;color:#68717e;font-size:11px;display:flex;justify-content:space-between;gap:15px}
+
+@media(max-width:900px){
+ .links{display:none}.menu{display:block}.navActions .btn{display:none}
+ .heroContent,.feature{grid-template-columns:1fr}.hero{min-height:auto;padding:80px 0}.heroVisual{height:290px}.statsGrid{grid-template-columns:1fr 1fr}.stat:nth-child(2){border-right:0}.stat:nth-child(1),.stat:nth-child(2){border-bottom:1px solid var(--line)}
+ .cards{grid-template-columns:1fr 1fr}.footerGrid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+ h1{letter-spacing:-2.5px}.hero p{font-size:16px}.heroVisual{height:230px}.carShape{height:110px}.carShape:before{height:60px;top:-40px}.wheel{width:42px;height:42px;bottom:-18px}.brandGrid,.cards{grid-template-columns:1fr}.brandTitle{font-size:35px}.sectionHead{display:block}.sectionHead p{margin-top:15px}.featureVisual{min-height:330px}.featureVisual .ring{width:250px;height:250px}.center b{font-size:48px}.checks{grid-template-columns:1fr}.ctaBox{padding:35px 25px;display:block}.ctaBox .btn{margin-top:22px}.footerGrid{grid-template-columns:1fr}.copyright{display:block}.copyright span{display:block;margin-top:8px}
+}
+</style>
+
+<style>
+#adminBtn{position:fixed;right:18px;bottom:18px;z-index:9999;background:#c9a45b;color:#08090b;border:0;border-radius:999px;padding:12px 18px;font-weight:900;cursor:pointer;box-shadow:0 8px 30px #0008}
+.adminOverlay{position:fixed;inset:0;background:#000b;backdrop-filter:blur(8px);z-index:10000;display:none;align-items:center;justify-content:center;padding:20px}.adminOverlay.open{display:flex}
+.adminPanel{width:min(1100px,96vw);max-height:92vh;overflow:auto;background:#0d1118;border:1px solid #ffffff1c;border-radius:20px;box-shadow:0 30px 100px #000; padding:26px;color:#f5f7fa}.adminHead{display:flex;justify-content:space-between;align-items:center;gap:15px;border-bottom:1px solid #ffffff12;padding-bottom:18px;margin-bottom:20px}.adminHead h2{font-size:28px;letter-spacing:-1px}.adminGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.adminCard{background:#121720;border:1px solid #ffffff12;border-radius:14px;padding:15px}.adminCard h3{font-size:17px;margin-bottom:5px}.adminCard small{color:#9da7b5}.adminActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.adminBtn{border:1px solid #ffffff18;background:#1a202a;color:#fff;padding:8px 11px;border-radius:8px;cursor:pointer}.adminBtn.red{background:#e31837;border-color:#e31837}.adminBtn.gold{background:#c9a45b;color:#08090b;border-color:#c9a45b}.loginBox{width:min(420px,95vw);background:#0d1118;border:1px solid #ffffff1c;border-radius:20px;padding:30px}.adminInput{width:100%;background:#080b10;border:1px solid #ffffff1b;color:#fff;padding:12px;border-radius:9px;margin:7px 0 12px;outline:none}.adminInput:focus{border-color:#c9a45b}.adminForm{display:grid;grid-template-columns:1fr 1fr;gap:10px}.adminForm .full{grid-column:1/-1}.adminTable{width:100%;border-collapse:collapse;margin-top:12px}.adminTable th,.adminTable td{text-align:left;padding:10px;border-bottom:1px solid #ffffff10;font-size:13px}.status{display:inline-block;padding:4px 8px;border-radius:999px;font-size:10px;font-weight:900}.available{background:#163b29;color:#69e09a}.sold{background:#3c1820;color:#ff7188}.featured{background:#3d3214;color:#f4d27b}.adminTabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}.adminTab{background:#141a23;border:1px solid #ffffff12;color:#ccd2db;padding:9px 13px;border-radius:999px;cursor:pointer}.adminTab.active{background:#fff;color:#090b0f}.adminSection{display:none}.adminSection.active{display:block}.toast{position:fixed;right:20px;top:20px;background:#121720;border:1px solid #ffffff1c;padding:13px 17px;border-radius:10px;z-index:11000;display:none}.toast.show{display:block}
+.orderOverlay{position:fixed;inset:0;background:#000b;backdrop-filter:blur(8px);z-index:10500;display:none;align-items:center;justify-content:center;padding:20px}.orderOverlay.open{display:flex}.orderBox{width:min(560px,96vw);max-height:92vh;overflow:auto;background:#0d1118;border:1px solid #ffffff1c;border-radius:20px;padding:28px;box-shadow:0 30px 100px #000}.orderBox h2{font-size:30px;margin-bottom:8px}.orderBox p{color:#9da7b5}.orderSummary{background:#121720;border:1px solid #ffffff12;border-radius:12px;padding:14px;margin:18px 0}.orderGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.orderGrid .full{grid-column:1/-1}.orderInput{width:100%;background:#080b10;border:1px solid #ffffff1b;color:#fff;padding:12px;border-radius:99px;margin-top:6px;outline:none}.orderInput:focus{border-color:#c9a45b}.orderActions{display:flex;justify-content:flex-end;gap:9px;margin-top:16px}.orderBtn{border:1px solid #ffffff18;background:#1a202a;color:#fff;padding:10px 14px;border-radius:9px;cursor:pointer}.orderBtn.gold{background:#c9a45b;color:#08090b;border-color:#c9a45b}.orderBtn.red{background:#e31837;border-color:#e31837}.orderStatus{font-size:12px;color:#69e09a;min-height:18px;margin-top:8px}.orderList{display:grid;gap:12px}.orderItem{background:#121720;border:1px solid #ffffff12;border-radius:14px;padding:16px}.orderItemHead{display:flex;justify-content:space-between;gap:12px;align-items:start}.orderItem h3{font-size:18px}.orderMeta{color:#9da7b5;font-size:12px;margin-top:6px}.orderNotes{margin-top:10px;color:#d6dbe2;font-size:13px}.orderActions .adminBtn{padding:7px 10px}.orderNew{border-left:3px solid #c9a45b}.orderClosed{opacity:.65}.orderBadge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:10px;font-weight:900;background:#163b29;color:#69e09a}.orderBadge.closed{background:#3c1820;color:#ff7188}@media(max-width:600px){.orderGrid{grid-template-columns:1fr}.orderGrid .full{grid-column:auto}}
+@media(max-width:800px){.adminGrid{grid-template-columns:1fr}.adminForm{grid-template-columns:1fr}.adminForm .full{grid-column:auto}}
+</style>
 </head>
-<body class="min-h-screen flex flex-col justify-between selection:bg-sky-500 selection:text-white">
+<body>
 
-    <!-- Navigation Header -->
-    <header class="sticky top-0 z-40 bg-[#0b0f19]/90 backdrop-blur-md border-b border-[#1f293d]">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-            <!-- Brand Logo -->
-            <div class="flex items-center space-x-3 cursor-pointer" onclick="filterCategory('All')">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-sky-500/20">
-                    <i class="fa-solid font-bold text-white text-xl">N</i>
-                </div>
-                <div>
-                    <span class="text-2xl font-extrabold tracking-tight text-white flex items-center gap-2">
-                        NORTHSTAR <span class="text-sky-400">MOTORS</span>
-                    </span>
-                    <p class="text-xs text-gray-400 font-medium">Cadillac & Chevrolet Excellence</p>
-                </div>
-            </div>
+<div class="topbar"><div class="container"><span>Premium Chevrolet & Cadillac Dealer</span><span>Sales • Service • Parts</span></div></div>
 
-            <!-- Right Actions: Admin Button & Direct Search -->
-            <div class="flex items-center space-x-4">
-                <button id="adminToggleBtn" onclick="openAdminModal()" class="px-4 py-2 rounded-lg bg-[#1f293d] hover:bg-[#334155] border border-gray-700 text-gray-200 text-sm font-semibold transition-all flex items-center space-x-2 shadow-sm">
-                    <i class="fa-solid fa-gear text-sky-400"></i>
-                    <span>Admin Panel</span>
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Content Container -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
-
-        <!-- Announcement Banner / Stats -->
-        <div class="mb-8 p-6 rounded-2xl glass-panel relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
-            <div class="z-10">
-                <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-sky-500/10 text-sky-400 border border-sky-500/20 mb-3">Verified Showroom Inventory</span>
-                <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Find Your Next Performance Vehicle</h1>
-                <p class="text-gray-400 mt-2 max-w-xl text-sm sm:text-base">Browse our live inventory of premium trucks, luxury sedans, and high-performance SUVs. Instant online orders and inquiries available.</p>
-            </div>
-            <div class="flex items-center gap-4 z-10 w-full md:w-auto justify-start md:justify-end">
-                <div class="bg-[#0b0f19]/60 px-5 py-3 rounded-xl border border-[#1f293d] text-center">
-                    <p class="text-xs text-gray-400 font-medium uppercase">Active Listings</p>
-                    <p id="statTotalVehicles" class="text-2xl font-bold text-sky-400">0</p>
-                </div>
-                <div class="bg-[#0b0f19]/60 px-5 py-3 rounded-xl border border-[#1f293d] text-center">
-                    <p class="text-xs text-gray-400 font-medium uppercase">Ready to Drive</p>
-                    <p id="statAvailableVehicles" class="text-2xl font-bold text-emerald-400">0</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Filter & Search Controls Bar -->
-        <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 mb-8">
-            <!-- Category Filter Pills -->
-            <div class="flex items-center space-x-2 overflow-x-auto pb-2 md:pb-0 scrollbar-none" id="categoryFilterContainer">
-                <!-- Pills rendered via JS -->
-            </div>
-
-            <!-- Search Box & Sort Selector -->
-            <div class="flex items-center space-x-3 w-full md:w-auto">
-                <div class="relative flex-grow md:w-64">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500 text-sm"></i>
-                    <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Search make, model, year..." class="w-full bg-[#111827] border border-[#1f293d] rounded-xl pl-10 pr-4 py-2.5 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-sky-500 transition-colors">
-                </div>
-                <select id="sortSelect" onchange="handleSort()" class="bg-[#111827] border border-[#1f293d] rounded-xl px-3 py-2.5 text-sm text-gray-200 focus:outline-none focus:border-sky-500 transition-colors">
-                    <option value="newest">Newest First</option>
-                    <option value="price-low">Price: Low to High</option>
-                    <option value="price-high">Price: High to Low</option>
-                    <option value="mileage">Lowest Mileage</option>
-                </select>
-            </div>
-        </div>
-
-        <!-- Vehicles Grid Container -->
-        <div id="loadingState" class="py-20 text-center">
-            <i class="fa-solid fa-circle-notch fa-spin text-3xl text-sky-400 mb-3"></i>
-            <p class="text-gray-400 text-sm">Fetching Northstar Motors inventory...</p>
-        </div>
-
-        <div id="vehiclesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden">
-            <!-- Vehicle Cards injected dynamically -->
-        </div>
-
-        <!-- Empty Inventory State -->
-        <div id="emptyState" class="hidden text-center py-16 bg-[#111827]/50 rounded-2xl border border-[#1f293d]">
-            <i class="fa-solid fa-car-rear text-5xl text-gray-600 mb-4"></i>
-            <h3 class="text-lg font-bold text-gray-200">No Vehicles Match Your Search</h3>
-            <p class="text-gray-400 text-sm mt-1">Try adjusting your filters or category selection.</p>
-            <button onclick="resetFilters()" class="mt-4 px-4 py-2 bg-sky-500/10 text-sky-400 rounded-lg text-sm font-semibold border border-sky-500/20 hover:bg-sky-500/20 transition-all">
-                Reset All Filters
-            </button>
-        </div>
-    </main>
-
-    <!-- Order Request Modal Overlay -->
-    <div id="orderModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden">
-        <div class="bg-[#111827] border border-[#1f293d] rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl relative transform transition-all">
-            <!-- Modal Header -->
-            <div class="p-6 border-b border-[#1f293d] flex items-center justify-between bg-[#0b0f19]/50">
-                <div>
-                    <h3 class="text-xl font-bold text-white">Order Vehicle</h3>
-                    <p id="orderVehicleTitle" class="text-xs text-sky-400 font-semibold mt-0.5">Vehicle Details</p>
-                </div>
-                <button onclick="closeOrderModal()" class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-800 transition-colors">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
-            </div>
-
-            <!-- Form -->
-            <form id="orderForm" onsubmit="submitOrder(event)" class="p-6 space-x-0 space-y-4">
-                <input type="hidden" id="orderVehicleId">
-                
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-gray-400 mb-1.5">Full Name *</label>
-                    <input type="text" id="orderCustomerName" required placeholder="e.g. John Doe" class="w-full bg-[#0b0f19] border border-[#1f293d] rounded-xl px-4 py-2.5 text-sm text-gray-200 focus:outline-none focus:border-sky-500">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-gray-400 mb-1.5">Discord Username / Tag *</label>
-                    <input type="text" id="orderDiscord" required placeholder="e.g. johndoe#1234 or @johndoe" class="w-full bg-[#0b0f19] border border-[#1f293d] rounded-xl px-4 py-2.5 text-sm text-gray-200 focus:outline-none focus:border-sky-500">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-gray-400 mb-1.5">Phone Number *</label>
-                    <input type="tel" id="orderPhone" required placeholder="e.g. (555) 019-2834" class="w-full bg-[#0b0f19] border border-[#1f293d] rounded-xl px-4 py-2.5 text-sm text-gray-200 focus:outline-none focus:border-sky-500">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-gray-400 mb-1.5">Additional Notes / Inquiry</label>
-                    <textarea id="orderNotes" rows="3" placeholder="Specify trade-in details or preferred delivery timing..." class="w-full bg-[#0b0f19] border border-[#1f293d] rounded-xl px-4 py-2.5 text-sm text-gray-200 focus:outline-none focus:border-sky-500"></textarea>
-                </div>
-
-                <div class="pt-2 flex items-center justify-end space-x-3">
-                    <button type="button" onclick="closeOrderModal()" class="px-4 py-2.5 rounded-xl border border-gray-700 text-gray-300 text-sm font-semibold hover:bg-gray-800 transition-all">Cancel</button>
-                    <button type="submit" id="orderSubmitBtn" class="px-6 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-gray-950 text-sm font-bold shadow-lg shadow-sky-500/20 transition-all flex items-center space-x-2">
-                        <span>Submit Purchase Order</span>
-                        <i class="fa-solid fa-arrow-right text-xs"></i>
-                    </button>
-                </div>
-            </form>
-        </div>
+<nav>
+  <div class="container nav">
+    <a class="logo" href="#">
+      <div class="logoMark"><span></span><span></span><span></span></div>
+      <div class="logoText">NORTHSTAR <small>CHEVROLET • CADILLAC</small></div>
+    </a>
+    <div class="links">
+      <a href="#inventory">Inventory</a><a href="#chevrolet">Chevrolet</a><a href="#cadillac">Cadillac</a>
+      <a href="#service">Service</a>
     </div>
+    <div class="navActions"><a class="btn primary" href="#inventory">Shop Vehicles</a><button class="menu">☰</button></div>
+  </div>
+</nav>
 
-    <!-- Admin Management Modal Overlay -->
-    <div id="adminModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden">
-        <div class="bg-[#111827] border border-[#1f293d] rounded-2xl w-full max-w-4xl h-[90vh] flex flex-col overflow-hidden shadow-2xl">
-            <!-- Admin Modal Header -->
-            <div class="p-6 border-b border-[#1f293d] flex items-center justify-between bg-[#0b0f19]">
-                <div class="flex items-center space-x-3">
-                    <div class="p-2 rounded-lg bg-sky-500/10 border border-sky-500/20 text-sky-400">
-                        <i class="fa-solid fa-shield-halved text-xl"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-extrabold text-white">Dealership Management Console</h3>
-                        <p class="text-xs text-gray-400">Manage showroom listings, update status, and review customer orders.</p>
-                    </div>
-                </div>
-                <button onclick="closeAdminModal()" class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-800 transition-colors">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
-            </div>
-
-            <!-- Admin Navigation Tabs -->
-            <div class="flex border-b border-[#1f293d] bg-[#0b0f19]/50 px-6">
-                <button onclick="switchAdminTab('inventory')" id="tabBtnInventory" class="px-4 py-3 text-sm font-bold border-b-2 border-sky-400 text-sky-400 flex items-center space-x-2">
-                    <i class="fa-solid fa-car"></i>
-                    <span>Inventory Management</span>
-                </button>
-                <button onclick="switchAdminTab('add')" id="tabBtnAdd" class="px-4 py-3 text-sm font-semibold border-b-2 border-transparent text-gray-400 hover:text-gray-200 flex items-center space-x-2">
-                    <i class="fa-solid fa-plus"></i>
-                    <span>Add New Listing</span>
-                </button>
-                <button onclick="switchAdminTab('orders')" id="tabBtnOrders" class="px-4 py-3 text-sm font-semibold border-b-2 border-transparent text-gray-400 hover:text-gray-200 flex items-center space-x-2">
-                    <i class="fa-solid fa-clipboard-list"></i>
-                    <span>Customer Orders</span>
-                </button>
-            </div>
-
-            <!-- Tab Content Body -->
-            <div class="p-6 overflow-y-auto flex-grow bg-[#111827]">
-                
-                <!-- Tab 1: Inventory Table -->
-                <div id="tabInventory" class="space-y-4">
-                    <div class="flex items-center justify-between">
-                        <h4 class="text-sm font-bold uppercase tracking-wider text-gray-400">Current Dealership Listings</h4>
-                        <button onclick="switchAdminTab('add')" class="px-3 py-1.5 rounded-lg bg-sky-500/10 text-sky-400 hover:bg-sky-500/20 border border-sky-500/20 text-xs font-semibold transition-all flex items-center gap-1.5">
-                            <i class="fa-solid fa-plus"></i> Add Vehicle
-                        </button>
-                    </div>
-                    
-                    <div class="overflow-x-auto rounded-xl border border-[#1f293d]">
-                        <table class="w-full text-left text-sm text-gray-300">
-                            <thead class="bg-[#0b0f19] text-xs font-semibold uppercase text-gray-400 border-b border-[#1f293d]">
-                                <tr>
-                                    <th class="p-4">Vehicle</th>
-                                    <th class="p-4">Category</th>
-                                    <th class="p-4">Price</th>
-                                    <th class="p-4">Mileage</th>
-                                    <th class="p-4">Status</th>
-                                    <th class="p-4 text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="adminInventoryTable" class="divide-y divide-[#1f293d]">
-                                <!-- Dynamically filled -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Tab 2: Add/Edit Vehicle Form -->
-                <div id="tabAdd" class="hidden max-w-2xl mx-auto">
-                    <h4 class="text-lg font-bold text-white mb-4" id="formTitle">Add New Vehicle to Inventory</h4>
-                    <form id="vehicleForm" onsubmit="saveVehicle(event)" class="space-y-4">
-                        <input type="hidden" id="editVehicleId">
-                        
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-400 mb-1">Make *</label>
-                                <input type="text" id="vMake" required placeholder="Chevrolet / Cadillac" class="w-full bg-[#0b0f19] border border-[#1f293d] rounded-xl px-3 py-2 text-sm text-gray-200">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-400 mb-1">Model *</label>
-                                <input type="text" id="vModel" required placeholder="Corvette Z06" class="w-full bg-[#0b0f19] border border-[#1f293d] rounded-xl px-3 py-2 text-sm text-gray-200">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-400 mb-1">Year *</label>
-                                <input type="number" id="vYear" required placeholder="2024" class="w-full bg-[#0b0f19] border border-[#1f293d] rounded-xl px-3 py-2 text-sm text-gray-200">
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-400 mb-1">Category *</label>
-                                <select id="vCategory" required class="w-full bg-[#0b0f19] border border-[#1f293d] rounded-xl px-3 py-2 text-sm text-gray-200">
-                                    <option value="Trucks">Trucks</option>
-                                    <option value="SUVs">SUVs</option>
-                                    <option value="Performance">Performance</option>
-                                    <option value="Luxury">Luxury</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-400 mb-1">Price ($) *</label>
-                                <input type="number" id="vPrice" required placeholder="105000" class="w-full bg-[#0b0f19] border border-[#1f293d] rounded-xl px-3 py-2 text-sm text-gray-200">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-400 mb-1">Mileage (mi) *</label>
-                                <input type="number" id="vMileage" required placeholder="1200" class="w-full bg-[#0b0f19] border border-[#1f293d] rounded-xl px-3 py-2 text-sm text-gray-200">
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-400 mb-1">Engine Specs</label>
-                                <input type="text" id="vEngine" placeholder="5.5L LT6 V8" class="w-full bg-[#0b0f19] border border-[#1f293d] rounded-xl px-3 py-2 text-sm text-gray-200">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-400 mb-1">Drivetrain</label>
-                                <input type="text" id="vDrive" placeholder="RWD / AWD / 4WD" class="w-full bg-[#0b0f19] border border-[#1f293d] rounded-xl px-3 py-2 text-sm text-gray-200">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-400 mb-1">Transmission</label>
-                                <input type="text" id="vTransmission" placeholder="8-Speed Dual Clutch" class="w-full bg-[#0b0f19] border border-[#1f293d] rounded-xl px-3 py-2 text-sm text-gray-200">
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-400 mb-1">Image URL *</label>
-                            <input type="url" id="vImage" required placeholder="https://images.unsplash.com/..." class="w-full bg-[#0b0f19] border border-[#1f293d] rounded-xl px-3 py-2 text-sm text-gray-200">
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-400 mb-1">Description</label>
-                            <textarea id="vDescription" rows="3" placeholder="Pristine condition, single owner, carbon trim package..." class="w-full bg-[#0b0f19] border border-[#1f293d] rounded-xl px-3 py-2 text-sm text-gray-200"></textarea>
-                        </div>
-
-                        <div class="flex items-center space-x-6 py-2">
-                            <label class="flex items-center space-x-2 cursor-pointer">
-                                <input type="checkbox" id="vIsSold" class="w-4 h-4 rounded text-sky-500 bg-[#0b0f19] border-gray-700 focus:ring-sky-500">
-                                <span class="text-sm font-semibold text-red-400">Mark as SOLD</span>
-                            </label>
-                        </div>
-
-                        <div class="pt-4 flex items-center justify-end space-x-3">
-                            <button type="button" onclick="switchAdminTab('inventory')" class="px-4 py-2 rounded-xl border border-gray-700 text-gray-300 text-sm font-semibold hover:bg-gray-800">Cancel</button>
-                            <button type="submit" id="saveVehicleBtn" class="px-6 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-gray-950 font-bold text-sm shadow-md shadow-sky-500/20">
-                                Save Vehicle Listing
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- Tab 3: Customer Orders View -->
-                <div id="tabOrders" class="hidden space-y-4">
-                    <h4 class="text-sm font-bold uppercase tracking-wider text-gray-400">Incoming Customer Orders</h4>
-                    <div id="ordersContainer" class="space-y-3">
-                        <!-- Loaded via JS -->
-                    </div>
-                </div>
-
-            </div>
-        </div>
+<header class="hero">
+  <div class="heroContent">
+    <div>
+      <div class="eyebrow">Drive something unforgettable</div>
+      <h1>American performance.<br><span style="color:#dfe3e8">Premium by design.</span></h1>
+      <p>Explore Chevrolet trucks, SUVs and performance cars alongside the latest Cadillac luxury and V-Series vehicles—all in one destination.</p>
+      <div class="heroButtons">
+        <a class="btn primary" href="#inventory">Explore Inventory →</a>
+        <a class="btn" href="#contact">Join Our Discord</a>
+      </div>
     </div>
-
-    <!-- Notification Toast Element -->
-    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 max-w-sm w-full bg-[#111827] border border-[#1f293d] p-4 rounded-xl shadow-2xl flex items-center space-x-3">
-        <div id="toastIcon" class="text-sky-400 text-lg">
-            <i class="fa-solid fa-circle-check"></i>
-        </div>
-        <div class="flex-grow">
-            <p id="toastTitle" class="text-sm font-bold text-white">Success</p>
-            <p id="toastMessage" class="text-xs text-gray-400">Operation completed successfully.</p>
-        </div>
+    <div class="heroVisual">
+      <div class="badge"><strong>2026 LINEUP</strong><span>CHEVROLET • CADILLAC</span></div>
+      <div class="carShape"><i class="wheel w1"></i><i class="wheel w2"></i></div>
     </div>
+  </div>
+</header>
 
-    <!-- Footer -->
-    <footer class="border-t border-[#1f293d] bg-[#0b0f19] py-8 mt-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div>
-                <p class="text-sm font-semibold text-gray-300">Northstar Motors &copy; 2026</p>
-                <p class="text-xs text-gray-500 mt-1">Premier Chevrolet & Cadillac Authorized Dealership</p>
+<div class="stats"><div class="container statsGrid">
+  <div class="stat"><strong>500+</strong><span>Vehicles Available</span></div>
+  <div class="stat"><strong>Fast</strong><span>Approvals</span></div>
+  <div class="stat"><strong>100%</strong><span>Transparent Pricing</span></div>
+  <div class="stat"><strong>5★</strong><span>Customer Experience</span></div>
+</div></div>
+
+<section id="chevrolet"><div class="container">
+  <div class="sectionHead"><div><div class="kicker">Choose your badge</div><h2>Two icons. One destination.</h2></div><p>From work-ready Chevrolet trucks to handcrafted Cadillac luxury, find a vehicle built around how you actually drive.</p></div>
+  <div class="brandGrid">
+    <article class="brandCard"><div class="brandTitle chev">CHEVROLET</div><p>Trucks, SUVs, sports cars and everyday vehicles engineered for capability, performance and value.</p><a class="btn" href="#inventory" onclick="filterByBrand('truck')">Explore Chevrolet →</a></article>
+    <article class="brandCard cad" id="cadillac"><div class="brandTitle cadillac">CADILLAC</div><p>Elevated design, advanced technology and V-Series performance—from CT5 to the Escalade family.</p><a class="btn gold" href="#inventory" onclick="filterByBrand('luxury')">Explore Cadillac →</a></article>
+  </div>
+</div></section>
+
+<section class="inventory" id="inventory"><div class="container">
+  <div class="sectionHead"><div><div class="kicker">Featured inventory</div><h2>Find your next vehicle.</h2></div><p>Filter the lineup and get straight to the models that fit your lifestyle.</p></div>
+  <div class="filters">
+    <button class="filter active" data-filter="all">All Vehicles</button>
+    <button class="filter" data-filter="truck">Trucks</button>
+    <button class="filter" data-filter="suv">SUVs</button>
+    <button class="filter" data-filter="performance">Performance</button>
+    <button class="filter" data-filter="luxury">Luxury</button>
+  </div>
+  <div class="cards">
+    <!-- Dynamic Vehicles Render Here -->
+  </div>
+</div></section>
+
+<section id="service"><div class="container feature">
+  <div class="featureVisual"><div class="ring"></div><div class="center"><b>360°</b><small>CARE FOR YOUR VEHICLE</small></div></div>
+  <div><div class="kicker">Beyond the sale</div><h2>Service that keeps you moving.</h2><p>Factory-trained technicians, genuine parts and modern diagnostics for Chevrolet and Cadillac vehicles. Schedule maintenance without the dealership runaround.</p>
+    <div class="checks"><div class="check">Factory-trained technicians</div><div class="check">Genuine GM parts</div><div class="check">Online scheduling</div><div class="check">Express maintenance</div></div>
+    <a class="btn light" href="#contact">Schedule Service</a>
+  </div>
+</div></section>
+
+<div id="orderOverlay" class="orderOverlay"><div class="orderBox"><div class="eyebrow">Northstar Vehicle Order</div><h2>Place Your Order</h2><p>Submit your vehicle request and the dealership will contact you through Discord.</p><div id="orderSummary" class="orderSummary"></div><form id="orderForm" class="orderGrid"><input type="hidden" id="orderVehicleId"><div><label>Your Name</label><input id="orderName" class="orderInput" required placeholder="Your RP name"></div><div><label>Discord Name <strong style="color:#e31837">*</strong></label><input id="orderDiscord" class="orderInput" required placeholder="username or username#0000"></div><div class="full"><label>Additional Notes</label><textarea id="orderNotes" class="orderInput" rows="3" placeholder="Anything the dealership should know"></textarea></div><div class="full"><div id="orderStatus" class="orderStatus"></div></div><div class="full orderActions"><button type="button" class="orderBtn" onclick="closeOrder()">Cancel</button><button type="submit" class="orderBtn gold">Submit Order</button></div></form></div></div>
+<button id="adminBtn">⚙ Admin</button>
+<div id="adminLogin" class="adminOverlay"><div class="loginBox"><div class="eyebrow">Northstar Management</div><h2 style="margin-bottom:18px">Admin Login</h2><label>Username</label><input id="loginUser" class="adminInput" value="admin"><label>Password</label><input id="loginPass" class="adminInput" type="password" placeholder="Enter admin password"><div id="loginError" style="color:#ff7188;font-size:12px;min-height:18px"></div><div class="adminActions"><button class="adminBtn" onclick="closeAdmin()">Cancel</button><button class="adminBtn gold" onclick="doLogin()">Sign In</button></div></div></div>
+<div id="adminDash" class="adminOverlay"><div class="adminPanel"><div class="adminHead"><div><div class="eyebrow">Northstar Chevrolet • Cadillac</div><h2>Dealership Admin</h2></div><div class="adminActions"><button class="adminBtn" onclick="exportData()">Export</button><button class="adminBtn" onclick="logoutAdmin()">Log Out</button><button class="adminBtn red" onclick="closeDash()">Close</button></div></div><div class="adminTabs"><button class="adminTab active" onclick="adminTab('inventory',this)">Inventory</button><button class="adminTab" onclick="adminTab('orders',this)">Orders <span id="orderCount" style="margin-left:5px"></span></button><button class="adminTab" onclick="adminTab('add',this)">Add Vehicle</button><button class="adminTab" onclick="adminTab('settings',this)">Dealership Info</button></div><div id="adminInventory" class="adminSection active"></div><div id="adminOrders" class="adminSection"><div class="adminCard"><h3>Customer Orders</h3><small>Orders submitted from the public dealership website.</small><div id="ordersList" class="orderList" style="margin-top:14px"></div></div></div><div id="adminAdd" class="adminSection"><div class="adminCard"><h3>Add / Edit Vehicle</h3><form id="vehicleForm" class="adminForm"><input type="hidden" id="editId"><div><label>Make</label><input id="vMake" class="adminInput" required value="Chevrolet"></div><div><label>Model</label><input id="vModel" class="adminInput" required></div><div><label>Year</label><input id="vYear" class="adminInput" type="number" value="2026"></div><div><label>Price</label><input id="vPrice" class="adminInput" type="number" required></div><div><label>Mileage</label><input id="vMileage" class="adminInput" type="number" value="0"></div><div><label>Category</label><select id="vCategory" class="adminInput"><option value="truck">truck</option><option value="suv">suv</option><option value="performance">performance</option><option value="luxury">luxury</option><option value="suv luxury">suv luxury</option><option value="performance luxury">performance luxury</option></select></div><div><label>Power / Engine</label><input id="vEngine" class="adminInput" placeholder="6.2L V8"></div><div><label>Drivetrain</label><input id="vDrive" class="adminInput" placeholder="4x4"></div><div><label>Transmission</label><input id="vTrans" class="adminInput" placeholder="10-Speed Auto"></div><div class="full"><label>Description</label><textarea id="vDesc" class="adminInput" rows="3"></textarea></div><div class="full"><label>Vehicle Photo</label><input id="vPhoto" class="adminInput" type="file" accept="image/*"></div><div class="full"><label><input id="vFeatured" type="checkbox"> Featured vehicle</label> &nbsp; <label><input id="vSold" type="checkbox"> Mark as sold</label></div><div class="full adminActions"><button type="button" class="adminBtn" onclick="resetForm()">Clear</button><button type="submit" class="adminBtn gold">Save Vehicle</button></div></form></div></div><div id="adminSettings" class="adminSection"><div class="adminCard"><h3>Dealership Information</h3><form id="settingsForm"><label>Dealership Name</label><input id="sName" class="adminInput"><label>Phone</label><input id="sPhone" class="adminInput"><label>Discord Invite URL</label><input id="sDiscord" class="adminInput"><label>Address</label><input id="sAddress" class="adminInput"><label>Hero Heading</label><input id="sHero" class="adminInput"><label>Hero Description</label><textarea id="sDesc" class="adminInput" rows="3"></textarea><button class="adminBtn gold" type="submit">Save Dealership Info</button></form></div></div></div></div><div id="toast" class="toast"></div>
+
+<footer id="contact"><div class="container">
+  <div class="footerGrid">
+    <div><div class="logo"><div class="logoMark"><span></span><span></span><span></span></div><div class="logoText">NORTHSTAR <small>CHEVROLET • CADILLAC</small></div></div><p style="color:#737d89;font-size:13px;margin-top:16px;max-width:290px">A premium dealership experience for Chevrolet and Cadillac drivers.</p></div>
+    <div class="footerCol"><h4>Shop</h4><a href="#inventory">New Inventory</a><a href="#inventory">Pre-Owned</a><a href="#inventory">Trucks & SUVs</a><a href="#inventory">Performance</a></div>
+    <div class="footerCol"><h4>Services</h4><a href="#service">Service Center</a><a href="#service">Parts</a></div>
+    <div class="footerCol"><h4>Contact</h4><a href="tel:5555555555">(555) 555-5555</a><a href="mailto:sales@northstarauto.com">sales@northstarauto.com</a><a href="#contact">1234 Motor Avenue</a></div>
+  </div>
+  <div class="copyright"><span>© 2026 Northstar Chevrolet Cadillac. Demo dealership website.</span><span>*Pricing shown for demonstration and may change. Verify current MSRP and availability with dealer.</span></div>
+</div></footer>
+
+<script>
+// Filter state
+let currentFilter = 'all';
+
+// Setup Filter Buttons
+function setupFilterListeners() {
+  const filterButtons = document.querySelectorAll('.filter');
+  filterButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterButtons.forEach(x => x.classList.remove('active'));
+      btn.classList.add('active');
+      currentFilter = btn.dataset.filter || 'all';
+      renderPublic();
+    });
+  });
+}
+
+function filterByBrand(category) {
+  currentFilter = category;
+  const filterButtons = document.querySelectorAll('.filter');
+  filterButtons.forEach(btn => {
+    if (btn.dataset.filter === category) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+  renderPublic();
+}
+</script>
+
+<script>
+const ADMIN_USER = 'admin'; 
+
+// SHA-256 Hashing helper to avoid plain-text passwords in code
+async function hashPassword(password) {
+  const msgBuffer = new TextEncoder().encode(password);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// SHA-256 hash of "NS-L9y4BkdsJl8cxw!"
+const ADMIN_PASS_HASH = "fa2e0225db8f2b7a9aaeb97d747a8286ebbf052ed7f67d4ed2cddfbfa446ce46";
+
+// --- SUPABASE CONFIGURATION ---
+const SUPABASE_URL = 'https://mctvtvqchugwquhgyvqu.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1jdnR2dnFjaHVnd3F1aGd5dnF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDMyNDcwMTcsImV4cCI6MjA1ODgyMzAxN30.K9vQ_aA4bT_K2vW9aA4bT_K9vQ_aA4bT_K9vQ_aA4bT';
+const sbClient = window.supabase && SUPABASE_URL !== 'YOUR_SUPABASE_URL'
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  : null;
+
+/* SUPABASE SCHEMA SQL:
+  CREATE TABLE inventory ( id BIGINT PRIMARY KEY, make TEXT, model TEXT, year INT, price NUMERIC, mileage INT, category TEXT, engine TEXT, drive TEXT, trans TEXT, "desc" TEXT, featured BOOLEAN, sold BOOLEAN, photo TEXT );
+  CREATE TABLE orders ( id BIGINT PRIMARY KEY, "vehicleId" BIGINT, "vehicleName" TEXT, name TEXT, discord TEXT, notes TEXT, "createdAt" TEXT, status TEXT );
+  CREATE TABLE settings ( id INT PRIMARY KEY, name TEXT, phone TEXT, discord TEXT, address TEXT, hero TEXT, "desc" TEXT );
+  INSERT INTO settings (id, name, phone, discord, address, hero, "desc") VALUES (1, 'Northstar Chevrolet Cadillac', '(555) 555-5555', '#', '1234 Motor Avenue', 'American performance. Premium by design.', 'Explore Chevrolet trucks...');
+*/
+
+const defaultInventory=[
+  {id:1,make:'Chevrolet',model:'Silverado 1500',year:2026,price:40600,mileage:0,category:'truck',engine:'V8 Available',drive:'4x4',trans:'10-Speed Auto',desc:'Work-ready full-size pickup.',featured:true,sold:false,photo:''},
+  {id:2,make:'Chevrolet',model:'Tahoe',year:2026,price:59000,mileage:0,category:'suv',engine:'5.3L V8',drive:'4WD',trans:'10-Speed Auto',desc:'Three-row full-size SUV.',featured:true,sold:false,photo:''},
+  {id:3,make:'Chevrolet',model:'Corvette ZR1X',year:2026,price:227500,mileage:0,category:'performance',engine:'Hybrid V8',drive:'AWD',trans:'8-Speed DCT',desc:'High-performance Corvette.',featured:true,sold:false,photo:''},
+  {id:4,make:'Cadillac',model:'CT5',year:2026,price:49200,mileage:0,category:'luxury',engine:'Turbocharged',drive:'RWD',trans:'10-Speed Auto',desc:'Premium Cadillac sedan.',featured:false,sold:false,photo:''},
+  {id:5,make:'Cadillac',model:'Escalade',year:2026,price:91100,mileage:0,category:'suv luxury',engine:'6.2L V8',drive:'4WD',trans:'10-Speed Auto',desc:'Full-size Cadillac luxury SUV.',featured:true,sold:false,photo:''},
+  {id:6,make:'Cadillac',model:'Escalade-V',year:2026,price:168000,mileage:0,category:'performance luxury',engine:'Supercharged V8',drive:'AWD',trans:'10-Speed Auto',desc:'V-Series performance SUV.',featured:true,sold:false,photo:''}
+];
+
+let inventory = defaultInventory;
+let orders = [];
+let settings = {
+  id: 1,
+  name:'Northstar Chevrolet Cadillac',
+  phone:'(555) 555-5555',
+  discord:'#',
+  address:'1234 Motor Avenue',
+  hero:'American performance. Premium by design.',
+  desc:'Explore Chevrolet trucks, SUVs and performance cars alongside the latest Cadillac luxury and V-Series vehicles—all in one destination.'
+};
+
+async function loadData() {
+  if (sbClient) {
+    try {
+      const [inv, ord, set] = await Promise.all([
+        sbClient.from('inventory').select('*').order('id', {ascending: false}),
+        sbClient.from('orders').select('*').order('id', {ascending: false}),
+        sbClient.from('settings').select('*').eq('id', 1).single()
+      ]);
+      if(inv.data && inv.data.length > 0) inventory = inv.data;
+      if(ord.data) orders = ord.data;
+      if(set.data) settings = set.data;
+    } catch(e) { console.error("Supabase load error", e); }
+  } else {
+    inventory = JSON.parse(localStorage.getItem('northstar_inventory')||'null')||defaultInventory;
+    orders = JSON.parse(localStorage.getItem('northstar_orders')||'[]');
+    settings = JSON.parse(localStorage.getItem('northstar_settings')||'null')||settings;
+  }
+  renderPublic();
+  if(document.getElementById('adminDash').classList.contains('open')) renderAdmin();
+}
+
+function save(){
+  if (!sbClient) {
+    localStorage.setItem('northstar_inventory',JSON.stringify(inventory));
+    localStorage.setItem('northstar_settings',JSON.stringify(settings));
+    localStorage.setItem('northstar_orders',JSON.stringify(orders));
+  }
+  renderPublic();
+  renderAdmin();
+}
+
+async function syncSupabase(table, data, isDelete = false) {
+  if(!sbClient) return save();
+  try {
+    if(isDelete) await sbClient.from(table).delete().eq('id', data.id);
+    else await sbClient.from(table).upsert([data]);
+  } catch(e) { console.error("Supabase sync error", e); }
+  renderPublic(); renderAdmin();
+}
+
+function toast(m){
+  const t=document.getElementById('toast');
+  t.textContent=m;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+function openAdmin(){
+  document.getElementById('adminLogin').classList.add('open');
+  document.getElementById('loginPass').focus();
+}
+
+function closeAdmin(){
+  document.getElementById('adminLogin').classList.remove('open');
+}
+
+async function doLogin(){
+  const user = document.getElementById('loginUser').value;
+  const pass = document.getElementById('loginPass').value;
+  const hashedPass = await hashPassword(pass);
+
+  if(user === ADMIN_USER && hashedPass === ADMIN_PASS_HASH){
+    closeAdmin();
+    document.getElementById('adminDash').classList.add('open');
+    renderAdmin();
+  } else {
+    document.getElementById('loginError').textContent='Invalid admin credentials.';
+  }
+}
+
+function closeDash(){document.getElementById('adminDash').classList.remove('open')}
+function logoutAdmin(){closeDash()}
+
+function adminTab(id,b){
+  document.querySelectorAll('.adminTab').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.adminSection').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  document.getElementById('admin'+id[0].toUpperCase()+id.slice(1)).classList.add('active');
+  if(id==='settings')loadSettings();
+}
+
+function renderAdmin(){
+  const box=document.getElementById('adminInventory');
+  if(!box)return;
+  box.innerHTML='<div class="adminGrid">'+inventory.map(v=>`
+    <div class="adminCard">
+      <div style="height:120px;border-radius:10px;background:${v.photo?'url('+v.photo+') center/cover':'radial-gradient(circle,#39414d,#080a0e)'}"></div>
+      <h3 style="margin-top:10px">${v.year} ${v.make} ${v.model}</h3>
+      <small>$${Number(v.price).toLocaleString()} • ${Number(v.mileage).toLocaleString()} mi</small>
+      <p style="margin-top:7px">
+        <span class="status ${v.sold?'sold':'available'}">${v.sold?'SOLD':'AVAILABLE'}</span> 
+        ${v.featured?'<span class="status featured">FEATURED</span>':''}
+      </p>
+      <div class="adminActions">
+        <button class="adminBtn" onclick="editVehicle(${v.id})">Edit</button>
+        <button class="adminBtn gold" onclick="toggleFeatured(${v.id})">${v.featured?'Unfeature':'Feature'}</button>
+        <button class="adminBtn" onclick="toggleSold(${v.id})">${v.sold?'Mark Available':'Mark Sold'}</button>
+        <button class="adminBtn red" onclick="deleteVehicle(${v.id})">Delete</button>
+      </div>
+    </div>
+  `).join('')+'</div>';
+  renderOrders();
+}
+
+function renderOrders(){
+  const list=document.getElementById('ordersList'), count=document.getElementById('orderCount');
+  const open=orders.filter(o=>o.status!=='closed').length;
+  if(count) count.textContent=open?`(${open})`:'';
+  if(!list) return;
+  if(!orders.length){
+    list.innerHTML='<p style="color:#9da7b5;margin-top:12px">No customer orders yet.</p>';
+    return;
+  }
+  list.innerHTML=orders.slice().reverse().map(o=>{
+    const v=inventory.find(x=>x.id===o.vehicleId);
+    const title=v?`${v.year} ${v.make} ${v.model}`:o.vehicleName;
+    return `
+      <div class="orderItem ${o.status==='closed'?'orderClosed':'orderNew'}">
+        <div class="orderItemHead">
+          <div>
+            <h3>${escapeHtml(title)}</h3>
+            <div class="orderMeta">
+              <strong>Customer:</strong> ${escapeHtml(o.name)} &nbsp; • &nbsp; 
+              <strong>Discord:</strong> ${escapeHtml(o.discord)}<br>
+              <strong>Submitted:</strong> ${new Date(o.createdAt).toLocaleString()}
             </div>
-            <div class="flex items-center space-x-6 text-xs text-gray-400">
-                <span class="hover:text-sky-400 cursor-pointer">Privacy Policy</span>
-                <span class="hover:text-sky-400 cursor-pointer">Terms of Service</span>
-                <span class="hover:text-sky-400 cursor-pointer">Sales Inquiry</span>
-            </div>
+          </div>
+          <span class="orderBadge ${o.status==='closed'?'closed':''}">${o.status==='closed'?'CLOSED':'NEW'}</span>
         </div>
-    </footer>
+        ${o.notes?`<div class="orderNotes"><strong>Notes:</strong> ${escapeHtml(o.notes)}</div>`:''}
+        <div class="orderActions">
+          <button class="adminBtn" onclick="copyDiscord('${encodeURIComponent(o.discord)}')">Copy Discord</button>
+          ${o.status==='closed'?'<button class="adminBtn" onclick="reopenOrder('+o.id+')">Reopen</button>':'<button class="adminBtn gold" onclick="closeOrderAdmin('+o.id+')">Mark Closed</button>'}
+          <button class="adminBtn red" onclick="deleteOrder(${o.id})">Delete</button>
+        </div>
+      </div>`;
+  }).join('');
+}
 
-    <script>
-        // --- Supabase Backend Connection Setup ---
-        const SUPABASE_URL = 'https://uzvopmfnytgtfapzwivv.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_SSTziJGXdh0gilPDHw5xag_PIawBNHw';
-        let supabase = null;
+function escapeHtml(x){
+  return String(x??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+}
 
-        // Application Global State
-        let vehiclesData = [];
-        let ordersData = [];
-        let activeCategory = 'All';
-        let currentSearchQuery = '';
-        let currentSort = 'newest';
+function resetForm(){
+  document.getElementById('vehicleForm').reset();
+  document.getElementById('editId').value='';
+}
 
-        // Sample Backup Vehicles Data
-        const fallbackVehicles = [
-            {
-                id: '1',
-                make: 'Chevrolet',
-                model: 'Corvette Z06 3LZ',
-                year: 2024,
-                category: 'Performance',
-                price: 138500,
-                mileage: 450,
-                engine: '5.5L LT6 V8 (670 hp)',
-                drive: 'RWD',
-                transmission: '8-Speed Dual Clutch',
-                description: 'Carbon fiber aero package, Z07 performance package, competition bucket seats.',
-                image_url: 'https://images.unsplash.com/photo-1617814076367-b759c7d7e738?q=80&w=1200&auto=format&fit=crop',
-                is_sold: false
-            },
-            {
-                id: '2',
-                make: 'Cadillac',
-                model: 'Escalade-V Series',
-                year: 2023,
-                category: 'SUVs',
-                price: 154900,
-                mileage: 4200,
-                engine: '6.2L Supercharged V8 (682 hp)',
-                drive: 'AWD',
-                transmission: '10-Speed Automatic',
-                description: 'Full semi-aniline leather interior, AKG 36-speaker sound system, rear seat entertainment.',
-                image_url: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=1200&auto=format&fit=crop',
-                is_sold: false
-            },
-            {
-                id: '3',
-                make: 'Chevrolet',
-                model: 'Silverado 1500 ZR2',
-                year: 2024,
-                category: 'Trucks',
-                price: 74800,
-                mileage: 1800,
-                engine: '6.2L EcoTec3 V8',
-                drive: '4WD',
-                transmission: '10-Speed Automatic',
-                description: 'Multimatic DSSV dampers, front/rear e-lockers, 33-inch Goodyear Wrangler MT tires.',
-                image_url: 'https://images.unsplash.com/photo-1559416523-140ddc3d238c?q=80&w=1200&auto=format&fit=crop',
-                is_sold: false
-            },
-            {
-                id: '4',
-                make: 'Cadillac',
-                model: 'CT5-V Blackwing',
-                year: 2023,
-                category: 'Performance',
-                price: 98200,
-                mileage: 8200,
-                engine: '6.2L Supercharged V8 (668 hp)',
-                drive: 'RWD',
-                transmission: '6-Speed Manual',
-                description: 'Rare 6-speed manual configuration, carbon ceramic brakes, suede steering wheel.',
-                image_url: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1200&auto=format&fit=crop',
-                is_sold: true
-            },
-            {
-                id: '5',
-                make: 'Cadillac',
-                model: 'LYRIQ Sport AWD',
-                year: 2024,
-                category: 'Luxury',
-                price: 68500,
-                mileage: 320,
-                engine: 'Dual Motor Ultium EV (500 hp)',
-                drive: 'AWD',
-                transmission: 'Single-Speed Direct Drive',
-                description: '307 miles EPA estimated range, Super Cruise hands-free driver assistance.',
-                image_url: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?q=80&w=1200&auto=format&fit=crop',
-                is_sold: false
-            },
-            {
-                id: '6',
-                make: 'Chevrolet',
-                model: 'Tahoe High Country',
-                year: 2023,
-                category: 'SUVs',
-                price: 81200,
-                mileage: 14500,
-                engine: '3.0L Duramax Turbo-Diesel',
-                drive: '4WD',
-                transmission: '10-Speed Automatic',
-                description: 'Adaptive air ride suspension, panoramic sunroof, max trailering package.',
-                image_url: 'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?q=80&w=1200&auto=format&fit=crop',
-                is_sold: false
-            }
-        ];
+function editVehicle(id){
+  const v=inventory.find(x=>x.id===id);
+  if(!v)return;
+  ['Make','Model','Year','Price','Mileage','Category','Engine','Drive','Trans','Desc'].forEach(x=>{
+    const key=x.charAt(0).toLowerCase()+x.slice(1);
+    document.getElementById('v'+x).value=v[key]||'';
+  });
+  document.getElementById('editId').value=id;
+  document.getElementById('vFeatured').checked=v.featured;
+  document.getElementById('vSold').checked=v.sold;
+  adminTab('add',document.querySelectorAll('.adminTab')[2]);
+}
 
-        window.addEventListener('DOMContentLoaded', async () => {
-            // Initialize Supabase Client securely
-            if (window.supabase) {
-                try {
-                    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-                } catch(e) {
-                    console.warn("Supabase init error, using fallback state:", e);
-                }
-            }
+function toggleFeatured(id){
+  const v=inventory.find(x=>x.id===id);
+  if(v){ v.featured=!v.featured; syncSupabase('inventory', v); toast('Featured status updated.'); }
+}
 
-            // Render category pills
-            renderCategoryFilterPills();
+function toggleSold(id){
+  const v=inventory.find(x=>x.id===id);
+  if(v){ v.sold=!v.sold; syncSupabase('inventory', v); toast(v.sold?'Vehicle marked sold.':'Vehicle marked available.'); }
+}
 
-            // Load live inventory
-            await loadInventory();
-        });
+function deleteVehicle(id){
+  if(confirm('Delete this vehicle from inventory?')){
+    inventory=inventory.filter(x=>x.id!==id);
+    syncSupabase('inventory', {id}, true);
+    toast('Vehicle deleted.');
+  }
+}
 
-        // Fetch Inventory from Supabase or Fallback
-        async function loadInventory() {
-            showLoading(true);
-            try {
-                if (supabase) {
-                    const { data, error } = await supabase
-                        .from('vehicles')
-                        .select('*')
-                        .order('created_at', { ascending: false });
+document.getElementById('vehicleForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const id=Number(document.getElementById('editId').value);
+  const file=document.getElementById('vPhoto').files[0];
+  
+  const finish=photo=>{
+    let targetData;
+    if(id){
+      targetData=inventory.find(x=>x.id===id);
+      targetData.make=vMake.value;
+      targetData.model=vModel.value;
+      targetData.year=Number(vYear.value);
+      targetData.price=Number(vPrice.value);
+      targetData.mileage=Number(vMileage.value);
+      targetData.category=vCategory.value;
+      targetData.engine=vEngine.value;
+      targetData.drive=vDrive.value;
+      targetData.trans=vTrans.value;
+      targetData.desc=vDesc.value;
+      targetData.featured=vFeatured.checked;
+      targetData.sold=vSold.checked;
+      if(photo) targetData.photo=photo;
+    }else{
+      targetData={
+        id:Date.now(),
+        make:vMake.value,
+        model:vModel.value,
+        year:Number(vYear.value),
+        price:Number(vPrice.value),
+        mileage:Number(vMileage.value),
+        category:vCategory.value,
+        engine:vEngine.value,
+        drive:vDrive.value,
+        trans:vTrans.value,
+        desc:vDesc.value,
+        featured:vFeatured.checked,
+        sold:vSold.checked,
+        photo:photo||''
+      };
+      inventory.push(targetData);
+    }
+    syncSupabase('inventory', targetData);
+    resetForm();
+    adminTab('inventory',document.querySelector('.adminTab'));
+    toast('Vehicle saved.');
+  };
 
-                    if (!error && data && data.length > 0) {
-                        vehiclesData = data;
-                    } else {
-                        vehiclesData = fallbackVehicles;
-                    }
-                } else {
-                    vehiclesData = fallbackVehicles;
-                }
-            } catch (err) {
-                console.error("Error loading vehicles:", err);
-                vehiclesData = fallbackVehicles;
-            } finally {
-                showLoading(false);
-                renderVehicles();
-                updateStats();
-            }
-        }
+  if(file){
+    const r=new FileReader();
+    r.onload=()=>finish(r.result);
+    r.readAsDataURL(file);
+  } else finish('');
+});
 
-        function renderVehicles() {
-            const grid = document.getElementById('vehiclesGrid');
-            const emptyState = document.getElementById('emptyState');
-            
-            // Filter logic
-            let filtered = vehiclesData.filter(v => {
-                const matchCategory = (activeCategory === 'All') || (v.category === activeCategory);
-                const q = currentSearchQuery.toLowerCase();
-                const matchSearch = !q || 
-                    v.make.toLowerCase().includes(q) || 
-                    v.model.toLowerCase().includes(q) || 
-                    v.year.toString().includes(q) ||
-                    (v.category && v.category.toLowerCase().includes(q));
-                return matchCategory && matchSearch;
-            });
+function loadSettings(){
+  sName.value=settings.name;
+  sPhone.value=settings.phone;
+  sDiscord.value=settings.discord;
+  sAddress.value=settings.address;
+  sHero.value=settings.hero;
+  sDesc.value=settings.desc;
+}
 
-            // Sorting logic
-            filtered.sort((a, b) => {
-                if (currentSort === 'price-low') return a.price - b.price;
-                if (currentSort === 'price-high') return b.price - a.price;
-                if (currentSort === 'mileage') return a.mileage - b.mileage;
-                return (b.year || 0) - (a.year || 0); // default newest
-            });
+document.getElementById('settingsForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  settings={id:1,name:sName.value,phone:sPhone.value,discord:sDiscord.value,address:sAddress.value,hero:sHero.value,desc:sDesc.value};
+  syncSupabase('settings', settings);
+  toast('Dealership information saved.');
+});
 
-            if (filtered.length === 0) {
-                grid.classList.add('hidden');
-                emptyState.classList.remove('hidden');
-                return;
-            }
+function renderPublic(){
+  const cards=document.querySelector('.cards');
+  if(!cards)return;
 
-            emptyState.classList.add('hidden');
-            grid.classList.remove('hidden');
+  // Filter vehicles based on active filter state
+  const filteredVehicles = inventory.filter(v => {
+    if (currentFilter === 'all') return true;
+    const cat = (v.category || '').toLowerCase();
+    return cat.includes(currentFilter.toLowerCase());
+  });
 
-            grid.innerHTML = filtered.map(v => `
-                <div class="bg-[#111827] border border-[#1f293d] rounded-2xl overflow-hidden shadow-xl hover:border-gray-700 transition-all duration-300 flex flex-col relative group">
-                    
-                    ${v.is_sold ? `<div class="sold-ribbon">SOLD</div>` : ''}
+  if (filteredVehicles.length === 0) {
+    cards.innerHTML = `<div class="no-results"><h3>No vehicles found</h3><p>There are no vehicles matching the "${currentFilter}" filter.</p></div>`;
+  } else {
+    cards.innerHTML = filteredVehicles.map(v => `
+      <article class="card" data-type="${v.category}" style="${v.sold?'opacity:.72':''}">
+        <div class="carImage" style="${v.photo?'background:url('+v.photo+') center/cover':''}">
+          ${v.sold?'<span style="position:absolute;top:15px;left:15px;background:#e31837;padding:7px 10px;border-radius:7px;font-size:10px;font-weight:900;z-index:2">SOLD</span>':''}
+        </div>
+        <div class="carMeta">
+          <span class="tag">${v.make} • ${v.category}</span>
+          <h3>${v.year} ${v.model}</h3>
+          <div class="specs">
+            <span>${v.engine||'Engine N/A'}</span>
+            <span>•</span>
+            <span>${v.drive||'Drive N/A'}</span>
+          </div>
+          <div class="price">
+            <strong>${v.sold?'SOLD':'$'+Number(v.price).toLocaleString()}</strong>
+            <span>${Number(v.mileage).toLocaleString()} MI</span>
+          </div>
+          ${v.sold?'':'<button class="btn primary" style="width:100%;margin-top:16px" onclick="openOrder('+v.id+')">Order This Vehicle →</button>'}
+        </div>
+      </article>
+    `).join('');
+  }
 
-                    <!-- Image Top Banner -->
-                    <div class="relative h-56 w-full overflow-hidden bg-gray-900">
-                        <img src="${v.image_url || 'https://placehold.co/600x400/111827/38bdf8?text=Northstar+Motors'}" 
-                             alt="${v.make} ${v.model}" 
-                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                             onerror="this.src='https://placehold.co/600x400/111827/38bdf8?text=Northstar+Motors'">
-                        <div class="absolute inset-0 bg-gradient-to-t from-[#111827] via-transparent to-black/20"></div>
-                        
-                        <!-- Top Badges -->
-                        <div class="absolute top-3 left-3 flex items-center space-x-2">
-                            <span class="px-2.5 py-1 rounded-md text-xs font-extrabold bg-[#0b0f19]/80 backdrop-blur-md text-sky-400 border border-sky-500/30">
-                                ${v.category || 'Vehicle'}
-                            </span>
-                        </div>
-                    </div>
+  // Update headers and dealership info
+  document.querySelector('.logoText').childNodes[0].textContent = settings.name.toUpperCase() + ' ';
+  document.querySelector('.hero h1').innerHTML = settings.hero.replace(/\. /g,'.<br>');
+  document.querySelector('.hero p').textContent = settings.desc;
+  document.querySelector('.footerCol a[href^="tel:"]').textContent = settings.phone;
+  document.querySelector('.footerCol a[href^="mailto:"]').textContent = settings.phone;
+}
 
-                    <!-- Card Details Content -->
-                    <div class="p-5 flex-grow flex flex-col justify-between space-y-4">
-                        <div>
-                            <div class="flex items-start justify-between gap-2">
-                                <div>
-                                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">${v.year} ${v.make}</span>
-                                    <h3 class="text-xl font-extrabold text-white leading-snug">${v.model}</h3>
-                                </div>
-                            </div>
-                            
-                            <!-- Price & Mileage Highlight -->
-                            <div class="mt-3 flex items-baseline justify-between border-y border-[#1f293d] py-2.5">
-                                <div>
-                                    <span class="text-xs text-gray-400 block font-medium">Showroom Price</span>
-                                    <span class="text-2xl font-black text-sky-400">$${Number(v.price).toLocaleString()}</span>
-                                </div>
-                                <div class="text-right">
-                                    <span class="text-xs text-gray-400 block font-medium">Mileage</span>
-                                    <span class="text-sm font-bold text-gray-200">${Number(v.mileage).toLocaleString()} mi</span>
-                                </div>
-                            </div>
+function openOrder(id){
+  const v=inventory.find(x=>x.id===id);
+  if(!v||v.sold)return;
+  document.getElementById('orderVehicleId').value=id;
+  document.getElementById('orderSummary').innerHTML=`<strong>${v.year} ${escapeHtml(v.make)} ${escapeHtml(v.model)}</strong><br><span style="color:#9da7b5">$${Number(v.price).toLocaleString()} • ${Number(v.mileage).toLocaleString()} mi</span>`;
+  document.getElementById('orderName').value='';
+  document.getElementById('orderDiscord').value='';
+  document.getElementById('orderNotes').value='';
+  document.getElementById('orderStatus').textContent='';
+  document.getElementById('orderOverlay').classList.add('open');
+  document.getElementById('orderDiscord').focus();
+}
 
-                            <!-- Spec Badges Grid -->
-                            <div class="grid grid-cols-2 gap-2 mt-3 text-xs text-gray-400">
-                                <div class="flex items-center space-x-2 bg-[#0b0f19]/60 px-2.5 py-1.5 rounded-lg border border-[#1f293d]">
-                                    <i class="fa-solid fa-gauge-high text-sky-400"></i>
-                                    <span class="truncate">${v.engine || 'N/A Spec'}</span>
-                                </div>
-                                <div class="flex items-center space-x-2 bg-[#0b0f19]/60 px-2.5 py-1.5 rounded-lg border border-[#1f293d]">
-                                    <i class="fa-solid fa-gears text-sky-400"></i>
-                                    <span class="truncate">${v.drive || 'AWD/RWD'}</span>
-                                </div>
-                            </div>
+function closeOrder(){document.getElementById('orderOverlay').classList.remove('open')}
 
-                            ${v.description ? `<p class="text-xs text-gray-400 mt-3 line-clamp-2">${v.description}</p>` : ''}
-                        </div>
+document.getElementById('orderForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const id=Number(document.getElementById('orderVehicleId').value),v=inventory.find(x=>x.id===id);
+  if(!v||v.sold){
+    document.getElementById('orderStatus').textContent='This vehicle is no longer available.';
+    return;
+  }
+  const o={
+    id:Date.now(),
+    vehicleId:id,
+    vehicleName:`${v.year} ${v.make} ${v.model}`,
+    name:document.getElementById('orderName').value.trim(),
+    discord:document.getElementById('orderDiscord').value.trim(),
+    notes:document.getElementById('orderNotes').value.trim(),
+    createdAt:new Date().toISOString(),
+    status:'new'
+  };
+  if(!o.discord){
+    document.getElementById('orderStatus').textContent='Discord name is required.';
+    return;
+  }
+  orders.push(o);
+  syncSupabase('orders', o);
+  document.getElementById('orderStatus').textContent='Order submitted successfully.';
+  setTimeout(closeOrder,900);
+});
 
-                        <!-- Card Action CTA Button -->
-                        <div class="pt-2">
-                            ${v.is_sold ? `
-                                <button disabled class="w-full py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-extrabold uppercase tracking-wider cursor-not-allowed text-center">
-                                    Vehicle Sold
-                                </button>
-                            ` : `
-                                <button onclick="openOrderModal('${v.id}')" class="w-full py-3 rounded-xl bg-sky-500 hover:bg-sky-400 text-gray-950 text-sm font-black tracking-wide shadow-lg shadow-sky-500/15 transition-all duration-200 flex items-center justify-center space-x-2 group-hover:shadow-sky-500/30">
-                                    <span>Order This Vehicle</span>
-                                    <i class="fa-solid fa-arrow-right text-xs"></i>
-                                </button>
-                            `}
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
+function closeOrderAdmin(id){const o=orders.find(x=>x.id===id);if(o){o.status='closed';syncSupabase('orders', o);toast('Order marked closed.')}}
+function reopenOrder(id){const o=orders.find(x=>x.id===id);if(o){o.status='new';syncSupabase('orders', o);toast('Order reopened.')}}
+function deleteOrder(id){if(confirm('Delete this customer order?')){orders=orders.filter(x=>x.id!==id);syncSupabase('orders', {id}, true);toast('Order deleted.')}}
+function copyDiscord(encoded){navigator.clipboard?.writeText(decodeURIComponent(encoded));toast('Discord name copied.')}
 
-        function renderCategoryFilterPills() {
-            const categories = ['All', 'Trucks', 'SUVs', 'Performance', 'Luxury'];
-            const container = document.getElementById('categoryFilterContainer');
-            
-            container.innerHTML = categories.map(cat => `
-                <button onclick="filterCategory('${cat}')" class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
-                    activeCategory === cat 
-                    ? 'bg-sky-500 text-gray-950 shadow-md shadow-sky-500/20' 
-                    : 'bg-[#111827] text-gray-400 hover:text-white border border-[#1f293d] hover:border-gray-700'
-                }">
-                    ${cat}
-                </button>
-            `).join('');
-        }
+function exportData(){
+  const blob=new Blob([JSON.stringify({inventory,settings,orders},null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='northstar-dealership-data.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
 
-        function filterCategory(cat) {
-            activeCategory = cat;
-            renderCategoryFilterPills();
-            renderVehicles();
-        }
+document.getElementById('adminBtn').onclick=openAdmin;
 
-        function handleSearch() {
-            currentSearchQuery = document.getElementById('searchInput').value;
-            renderVehicles();
-        }
-
-        function handleSort() {
-            currentSort = document.getElementById('sortSelect').value;
-            renderVehicles();
-        }
-
-        function resetFilters() {
-            activeCategory = 'All';
-            currentSearchQuery = '';
-            document.getElementById('searchInput').value = '';
-            renderCategoryFilterPills();
-            renderVehicles();
-        }
-
-        function updateStats() {
-            const total = vehiclesData.length;
-            const available = vehiclesData.filter(v => !v.is_sold).length;
-            document.getElementById('statTotalVehicles').innerText = total;
-            document.getElementById('statAvailableVehicles').innerText = available;
-        }
-
-        function showLoading(state) {
-            const loader = document.getElementById('loadingState');
-            const grid = document.getElementById('vehiclesGrid');
-            if (state) {
-                loader.classList.remove('hidden');
-                grid.classList.add('hidden');
-            } else {
-                loader.classList.add('hidden');
-            }
-        }
-
-        function openOrderModal(vehicleId) {
-            const vehicle = vehiclesData.find(v => v.id == vehicleId);
-            if (!vehicle) return;
-
-            document.getElementById('orderVehicleId').value = vehicle.id;
-            document.getElementById('orderVehicleTitle').innerText = `${vehicle.year} ${vehicle.make} ${vehicle.model} - $${Number(vehicle.price).toLocaleString()}`;
-            document.getElementById('orderModal').classList.remove('hidden');
-        }
-
-        function closeOrderModal() {
-            document.getElementById('orderModal').classList.add('hidden');
-            document.getElementById('orderForm').reset();
-        }
-
-        async function submitOrder(e) {
-            e.preventDefault();
-            const submitBtn = document.getElementById('orderSubmitBtn');
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processing...`;
-
-            const vehicleId = document.getElementById('orderVehicleId').value;
-            const vehicle = vehiclesData.find(v => v.id == vehicleId);
-
-            const newOrder = {
-                vehicle_id: vehicleId,
-                vehicle_title: vehicle ? `${vehicle.year} ${vehicle.make} ${vehicle.model}` : 'Unknown Vehicle',
-                customer_name: document.getElementById('orderCustomerName').value,
-                discord_tag: document.getElementById('orderDiscord').value,
-                phone_number: document.getElementById('orderPhone').value,
-                notes: document.getElementById('orderNotes').value,
-                status: 'Pending',
-                created_at: new Date().toISOString()
-            };
-
-            try {
-                if (supabase) {
-                    await supabase.from('orders').insert([newOrder]);
-                }
-                showToast('Order Submitted!', 'Sales manager will contact you shortly via Discord or Phone.');
-                closeOrderModal();
-            } catch (err) {
-                console.error("Order submit error:", err);
-                showToast('Order Received', 'Your inquiry has been placed with Northstar sales.');
-                closeOrderModal();
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = `<span>Submit Purchase Order</span> <i class="fa-solid fa-arrow-right text-xs"></i>`;
-            }
-        }
-
-        function openAdminModal() {
-            document.getElementById('adminModal').classList.remove('hidden');
-            renderAdminTable();
-            loadOrders();
-        }
-
-        function closeAdminModal() {
-            document.getElementById('adminModal').classList.add('hidden');
-        }
-
-        function switchAdminTab(tabName) {
-            const tabs = ['inventory', 'add', 'orders'];
-            tabs.forEach(t => {
-                const el = document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}`);
-                const btn = document.getElementById(`tabBtn${t.charAt(0).toUpperCase() + t.slice(1)}`);
-                if (t === tabName) {
-                    el.classList.remove('hidden');
-                    btn.classList.add('border-sky-400', 'text-sky-400');
-                    btn.classList.remove('border-transparent', 'text-gray-400');
-                } else {
-                    el.classList.add('hidden');
-                    btn.classList.remove('border-sky-400', 'text-sky-400');
-                    btn.classList.add('border-transparent', 'text-gray-400');
-                }
-            });
-
-            if (tabName === 'add' && !document.getElementById('editVehicleId').value) {
-                document.getElementById('formTitle').innerText = 'Add New Vehicle to Inventory';
-            }
-        }
-
-        function renderAdminTable() {
-            const tbody = document.getElementById('adminInventoryTable');
-            tbody.innerHTML = vehiclesData.map(v => `
-                <tr class="hover:bg-[#0b0f19]/40 transition-colors">
-                    <td class="p-4 flex items-center space-x-3">
-                        <img src="${v.image_url}" class="w-12 h-10 object-cover rounded-lg bg-gray-800" onerror="this.src='https://placehold.co/100x100/111827/38bdf8?text=N'">
-                        <div>
-                            <span class="font-bold text-white block">${v.year} ${v.make} ${v.model}</span>
-                            <span class="text-xs text-gray-500">ID: ${v.id}</span>
-                        </div>
-                    </td>
-                    <td class="p-4"><span class="px-2 py-1 rounded bg-sky-500/10 text-sky-400 text-xs font-bold">${v.category}</span></td>
-                    <td class="p-4 font-bold text-sky-400">$${Number(v.price).toLocaleString()}</td>
-                    <td class="p-4 text-xs font-medium text-gray-300">${Number(v.mileage).toLocaleString()} mi</td>
-                    <td class="p-4">
-                        ${v.is_sold 
-                            ? `<span class="px-2 py-1 rounded bg-red-500/10 text-red-400 text-xs font-extrabold uppercase">SOLD</span>`
-                            : `<span class="px-2 py-1 rounded bg-emerald-500/10 text-emerald-400 text-xs font-bold uppercase">AVAILABLE</span>`
-                        }
-                    </td>
-                    <td class="p-4 text-right space-x-2">
-                        <button onclick="editVehicle('${v.id}')" class="p-2 text-gray-400 hover:text-sky-400 bg-gray-800/50 hover:bg-gray-800 rounded-lg text-xs font-semibold">
-                            <i class="fa-solid fa-pen"></i> Edit
-                        </button>
-                        <button onclick="deleteVehicle('${v.id}')" class="p-2 text-gray-400 hover:text-red-400 bg-gray-800/50 hover:bg-gray-800 rounded-lg text-xs font-semibold">
-                            <i class="fa-solid fa-trash"></i> Delete
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        async function saveVehicle(e) {
-            e.preventDefault();
-            const editId = document.getElementById('editVehicleId').value;
-            
-            const payload = {
-                make: document.getElementById('vMake').value,
-                model: document.getElementById('vModel').value,
-                year: parseInt(document.getElementById('vYear').value),
-                category: document.getElementById('vCategory').value,
-                price: parseFloat(document.getElementById('vPrice').value),
-                mileage: parseInt(document.getElementById('vMileage').value),
-                engine: document.getElementById('vEngine').value,
-                drive: document.getElementById('vDrive').value,
-                transmission: document.getElementById('vTransmission').value,
-                image_url: document.getElementById('vImage').value,
-                description: document.getElementById('vDescription').value,
-                is_sold: document.getElementById('vIsSold').checked
-            };
-
-            try {
-                if (editId) {
-                    // Update
-                    if (supabase) {
-                        await supabase.from('vehicles').update(payload).eq('id', editId);
-                    }
-                    const idx = vehiclesData.findIndex(v => v.id == editId);
-                    if (idx !== -1) vehiclesData[idx] = { ...vehiclesData[idx], ...payload };
-                    showToast('Vehicle Updated', 'Listing has been updated.');
-                } else {
-                    // Insert
-                    const newId = Date.now().toString();
-                    const newObj = { id: newId, ...payload };
-                    if (supabase) {
-                        const { data } = await supabase.from('vehicles').insert([payload]).select();
-                        if (data && data[0]) newObj.id = data[0].id;
-                    }
-                    vehiclesData.unshift(newObj);
-                    showToast('Vehicle Added', 'New vehicle successfully added to showroom.');
-                }
-            } catch (err) {
-                console.error("Save vehicle error:", err);
-                showToast('Action Complete', 'Showroom state synchronized locally.');
-            } finally {
-                document.getElementById('vehicleForm').reset();
-                document.getElementById('editVehicleId').value = '';
-                renderVehicles();
-                updateStats();
-                renderAdminTable();
-                switchAdminTab('inventory');
-            }
-        }
-
-        function editVehicle(id) {
-            const v = vehiclesData.find(item => item.id == id);
-            if (!v) return;
-
-            document.getElementById('editVehicleId').value = v.id;
-            document.getElementById('vMake').value = v.make;
-            document.getElementById('vModel').value = v.model;
-            document.getElementById('vYear').value = v.year;
-            document.getElementById('vCategory').value = v.category || 'Performance';
-            document.getElementById('vPrice').value = v.price;
-            document.getElementById('vMileage').value = v.mileage;
-            document.getElementById('vEngine').value = v.engine || '';
-            document.getElementById('vDrive').value = v.drive || '';
-            document.getElementById('vTransmission').value = v.transmission || '';
-            document.getElementById('vImage').value = v.image_url;
-            document.getElementById('vDescription').value = v.description || '';
-            document.getElementById('vIsSold').checked = !!v.is_sold;
-
-            document.getElementById('formTitle').innerText = `Edit: ${v.year} ${v.make} ${v.model}`;
-            switchAdminTab('add');
-        }
-
-        async function deleteVehicle(id) {
-            if (!confirm("Are you sure you want to delete this listing from Northstar Motors?")) return;
-
-            try {
-                if (supabase) {
-                    await supabase.from('vehicles').delete().eq('id', id);
-                }
-                vehiclesData = vehiclesData.filter(v => v.id != id);
-                renderVehicles();
-                updateStats();
-                renderAdminTable();
-                showToast('Listing Removed', 'Vehicle removed from database.');
-            } catch (err) {
-                console.error("Delete error:", err);
-            }
-        }
-
-        async function loadOrders() {
-            const container = document.getElementById('ordersContainer');
-            try {
-                if (supabase) {
-                    const { data } = await supabase.from('orders').select('*').order('created_at', { ascending: false });
-                    if (data && data.length > 0) ordersData = data;
-                }
-            } catch (err) {
-                console.warn("Could not load database orders:", err);
-            }
-
-            if (ordersData.length === 0) {
-                container.innerHTML = `<div class="p-8 text-center text-gray-500 text-sm">No incoming orders found.</div>`;
-                return;
-            }
-
-            container.innerHTML = ordersData.map(o => `
-                <div class="p-4 bg-[#0b0f19] border border-[#1f293d] rounded-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                    <div>
-                        <div class="flex items-center space-x-2">
-                            <span class="text-sm font-bold text-white">${o.customer_name}</span>
-                            <span class="px-2 py-0.5 rounded bg-sky-500/10 text-sky-400 text-xs font-semibold">${o.discord_tag}</span>
-                        </div>
-                        <p class="text-xs text-sky-400 font-semibold mt-1">Vehicle: ${o.vehicle_title || 'N/A'}</p>
-                        <p class="text-xs text-gray-400 mt-1">Phone: ${o.phone_number} ${o.notes ? `| Note: "${o.notes}"` : ''}</p>
-                    </div>
-                    <div class="text-right">
-                        <span class="text-xs text-gray-500 block">${o.created_at ? new Date(o.created_at).toLocaleDateString() : 'Recent'}</span>
-                        <span class="inline-block mt-1 px-2.5 py-1 rounded bg-amber-500/10 text-amber-400 text-xs font-bold">${o.status || 'Pending'}</span>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // Toast Notification System
-        function showToast(title, message) {
-            const toast = document.getElementById('toast');
-            document.getElementById('toastTitle').innerText = title;
-            document.getElementById('toastMessage').innerText = message;
-            
-            toast.classList.remove('translate-y-20', 'opacity-0');
-            setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0');
-            }, 3500);
-        }
-    </script>
+// Initialize app
+setupFilterListeners();
+loadData();
+</script>
 </body>
 </html>
