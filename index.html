@@ -3,111 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Northstar Motors - Dealership</title>
+    <title>Northstar Motors</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root { --bg: #0f172a; --card: #1e293b; --accent: #38bdf8; --text: #f8fafc; --muted: #94a3b8; }
-        body { margin:0; font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); padding: 20px; }
-        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 15px; }
-        .nav-btn { background: var(--accent); color: #000; border: none; padding: 10px 16px; font-weight: bold; border-radius: 6px; cursor: pointer; }
-        .filters { margin: 20px 0; display: flex; gap: 10px; }
-        .filter-btn { background: var(--card); color: var(--text); border: 1px solid #334155; padding: 8px 14px; border-radius: 6px; cursor: pointer; }
-        .filter-btn.active { background: var(--accent); color: #000; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-        .card { background: var(--card); border-radius: 8px; overflow: hidden; border: 1px solid #334155; }
-        .card img { width: 100%; height: 180px; object-fit: cover; }
-        .card-body { padding: 15px; }
-        .price { color: var(--accent); font-size: 1.25rem; font-weight: bold; }
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; }
-        .modal-content { background: var(--card); padding: 25px; border-radius: 8px; width: 350px; display: flex; flex-direction: column; gap: 10px; }
-        input, select { padding: 10px; background: #0f172a; border: 1px solid #334155; color: var(--text); border-radius: 4px; }
+        :root { --bg: #090d16; --panel: #111827; --accent: #38bdf8; --text: #f8fafc; --muted: #94a3b8; --border: #1f293d; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); padding: 20px; }
+        header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+        .logo { font-size: 1.5rem; font-weight: bold; letter-spacing: -0.5px; }
+        .admin-btn { background: var(--accent); color: #000; border: none; padding: 10px 18px; font-weight: 700; border-radius: 6px; cursor: pointer; }
+        .filters { display: flex; gap: 8px; margin: 25px 0; }
+        .filter-btn { background: var(--panel); border: 1px solid var(--border); color: var(--text); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; }
+        .filter-btn.active { background: var(--accent); color: #000; font-weight: 600; border-color: var(--accent); }
+        .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+        .card img { width: 100%; height: 180px; object-fit: cover; background: #1e293b; }
+        .card-content { padding: 16px; }
+        .card-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 6px; }
+        .price { color: var(--accent); font-size: 1.25rem; font-weight: 700; margin-bottom: 8px; }
+        .details { color: var(--muted); font-size: 0.85rem; margin-bottom: 15px; }
+        .del-btn { background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); align-items: center; justify-content: center; z-index: 100; }
+        .modal-body { background: var(--panel); border: 1px solid var(--border); padding: 25px; border-radius: 10px; width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 12px; }
+        input, select { background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 10px; border-radius: 6px; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>Northstar Motors</h1>
-        <button class="nav-btn" onclick="toggleAdminModal()">⚙ Admin Panel</button>
-    </div>
+    <header>
+        <div class="logo">Northstar Motors</div>
+        <button class="admin-btn" onclick="toggleModal()">⚙ Admin Panel</button>
+    </header>
 
     <div class="filters">
-        <button class="filter-btn active" onclick="filterCategory('All', this)">All</button>
-        <button class="filter-btn" onclick="filterCategory('Trucks', this)">Trucks</button>
-        <button class="filter-btn" onclick="filterCategory('SUVs', this)">SUVs</button>
-        <button class="filter-btn" onclick="filterCategory('Performance', this)">Performance</button>
-        <button class="filter-btn" onclick="filterCategory('Luxury', this)">Luxury</button>
+        <button class="filter-btn active" onclick="setFilter('All', this)">All</button>
+        <button class="filter-btn" onclick="setFilter('Trucks', this)">Trucks</button>
+        <button class="filter-btn" onclick="setFilter('SUVs', this)">SUVs</button>
+        <button class="filter-btn" onclick="setFilter('Performance', this)">Performance</button>
+        <button class="filter-btn" onclick="setFilter('Luxury', this)">Luxury</button>
     </div>
 
-    <div class="grid" id="inventory">Loading vehicles...</div>
+    <div class="cards" id="inventory">Loading vehicles...</div>
 
-    <!-- Admin Form Modal -->
     <div class="modal" id="adminModal">
-        <div class="modal-content">
-            <h3>Add New Vehicle</h3>
-            <input type="text" id="vTitle" placeholder="Year Make Model (e.g. 2021 BMW X3)" required>
+        <div class="modal-body">
+            <h3>Add Vehicle Listing</h3>
+            <input type="text" id="vTitle" placeholder="Year Make Model (e.g. 2021 BMW X3)">
             <select id="vCategory">
                 <option value="Trucks">Trucks</option>
                 <option value="SUVs">SUVs</option>
                 <option value="Performance">Performance</option>
                 <option value="Luxury">Luxury</option>
             </select>
-            <input type="text" id="vPrice" placeholder="Price (e.g. $38,500)">
+            <input type="text" id="vPrice" placeholder="Price ($)">
             <input type="text" id="vMileage" placeholder="Mileage (e.g. 42,000 mi)">
-            <input type="url" id="vImage" placeholder="Image URL">
-            <button class="nav-btn" onclick="addVehicle()">Save Listing</button>
-            <button class="filter-btn" onclick="toggleAdminModal()">Close</button>
+            <input type="text" id="vImage" placeholder="Image Link (URL)">
+            <button class="admin-btn" onclick="addVehicle()">Save</button>
+            <button class="filter-btn" onclick="toggleModal()">Cancel</button>
         </div>
     </div>
 
     <script>
         const SUPABASE_URL = 'https://uzvopmfnytgtfapzwivv.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_SSTziJGXdh0gilPDHw5xag_PIawBNHw';
-        
+
         const { createClient } = supabase;
         const _supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        let allVehicles = [];
+        let inventory = [];
 
-        async function fetchVehicles() {
+        async function loadVehicles() {
             const { data, error } = await _supabase.from('vehicles').select('*').order('created_at', { ascending: false });
             if (error) {
-                document.getElementById('inventory').innerText = 'Failed to load inventory.';
-                console.error(error);
+                document.getElementById('inventory').innerHTML = '<p>Error loading data from Supabase.</p>';
             } else {
-                allVehicles = data;
-                renderVehicles(allVehicles);
+                inventory = data;
+                render(inventory);
             }
         }
 
-        function renderVehicles(list) {
+        function render(list) {
             const container = document.getElementById('inventory');
-            if(list.length === 0) {
-                container.innerHTML = '<p>No listings found.</p>';
+            if (!list || list.length === 0) {
+                container.innerHTML = '<p style="color:var(--muted)">No vehicles listed yet. Click Admin Panel to add one.</p>';
                 return;
             }
-            container.innerHTML = list.map(v => `
+            container.innerHTML = list.map(item => `
                 <div class="card">
-                    <img src="${v.image || 'https://via.placeholder.com/300x180'}" alt="${v.title}">
-                    <div class="card-body">
-                        <h3>${v.title}</h3>
-                        <p class="price">${v.price}</p>
-                        <p>${v.mileage || ''} • ${v.category}</p>
-                        <button class="filter-btn" style="color: #ef4444;" onclick="deleteVehicle('${v.id}')">Delete</button>
+                    <img src="${item.image || 'https://via.placeholder.com/400x250'}" alt="${item.title}">
+                    <div class="card-content">
+                        <div class="card-title">${item.title}</div>
+                        <div class="price">${item.price}</div>
+                        <div class="details">${item.mileage || ''} • ${item.category}</div>
+                        <button class="del-btn" onclick="deleteVehicle('${item.id}')">Delete</button>
                     </div>
                 </div>
             `).join('');
         }
 
-        function filterCategory(cat, btn) {
+        function setFilter(cat, btn) {
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            if (cat === 'All') renderVehicles(allVehicles);
-            else renderVehicles(allVehicles.filter(v => v.category === cat));
+            if (cat === 'All') render(inventory);
+            else render(inventory.filter(i => i.category === cat));
         }
 
-        function toggleAdminModal() {
-            const modal = document.getElementById('adminModal');
-            modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+        function toggleModal() {
+            const m = document.getElementById('adminModal');
+            m.style.display = m.style.display === 'flex' ? 'none' : 'flex';
         }
 
         async function addVehicle() {
@@ -117,189 +120,25 @@
             const mileage = document.getElementById('vMileage').value;
             const image = document.getElementById('vImage').value;
 
-            if(!title) return alert('Please enter a vehicle title');
+            if (!title) return alert('Vehicle title required.');
 
             const { error } = await _supabase.from('vehicles').insert([{ title, category, price, mileage, image }]);
-            if(error) alert('Error adding vehicle: ' + error.message);
+            if (error) alert('Error: ' + error.message);
             else {
-                toggleAdminModal();
-                fetchVehicles();
+                toggleModal();
+                loadVehicles();
             }
         }
 
         async function deleteVehicle(id) {
-            if(confirm('Are you sure you want to remove this vehicle?')) {
+            if (confirm('Delete listing?')) {
                 const { error } = await _supabase.from('vehicles').delete().eq('id', id);
-                if(error) alert('Error deleting: ' + error.message);
-                else fetchVehicles();
+                if (error) alert(error.message);
+                else loadVehicles();
             }
         }
 
-        fetchVehicles();
+        loadVehicles();
     </script>
-</body>
-</html>
-  const file=document.getElementById('vPhoto').files[0];
-  
-  const finish=photo=>{
-    const data={
-      make:vMake.value,
-      model:vModel.value,
-      year:Number(vYear.value),
-      price:Number(vPrice.value),
-      mileage:Number(vMileage.value),
-      category:vCategory.value,
-      engine:vEngine.value,
-      drive:vDrive.value,
-      trans:vTrans.value,
-      desc:vDesc.value,
-      featured:vFeatured.checked,
-      sold:vSold.checked,
-      photo:photo||''
-    };
-    if(id){
-      const old=inventory.find(x=>x.id===id);
-      Object.assign(old,data);
-      if(!photo) data.photo=old.photo;
-    }else{
-      data.id=Date.now();
-      inventory.push(data);
-    }
-    save();
-    resetForm();
-    adminTab('inventory',document.querySelector('.adminTab'));
-    toast('Vehicle saved.');
-  };
-
-  if(file){
-    const r=new FileReader();
-    r.onload=()=>finish(r.result);
-    r.readAsDataURL(file);
-  } else finish('');
-});
-
-function loadSettings(){
-  sName.value=settings.name;
-  sPhone.value=settings.phone;
-  sDiscord.value=settings.discord;
-  sAddress.value=settings.address;
-  sHero.value=settings.hero;
-  sDesc.value=settings.desc;
-}
-
-document.getElementById('settingsForm').addEventListener('submit',e=>{
-  e.preventDefault();
-  settings={name:sName.value,phone:sPhone.value,discord:sDiscord.value,address:sAddress.value,hero:sHero.value,desc:sDesc.value};
-  save();
-  toast('Dealership information saved.');
-});
-
-function renderPublic(){
-  const cards=document.querySelector('.cards');
-  if(!cards)return;
-
-  // Filter vehicles based on active filter state
-  const filteredVehicles = inventory.filter(v => {
-    if (currentFilter === 'all') return true;
-    const cat = (v.category || '').toLowerCase();
-    return cat.includes(currentFilter.toLowerCase());
-  });
-
-  if (filteredVehicles.length === 0) {
-    cards.innerHTML = `<div class="no-results"><h3>No vehicles found</h3><p>There are no vehicles matching the "${currentFilter}" filter.</p></div>`;
-  } else {
-    cards.innerHTML = filteredVehicles.map(v => `
-      <article class="card" data-type="${v.category}" style="${v.sold?'opacity:.72':''}">
-        <div class="carImage" style="${v.photo?'background:url('+v.photo+') center/cover':''}">
-          ${v.sold?'<span style="position:absolute;top:15px;left:15px;background:#e31837;padding:7px 10px;border-radius:7px;font-size:10px;font-weight:900;z-index:2">SOLD</span>':''}
-        </div>
-        <div class="carMeta">
-          <span class="tag">${v.make} • ${v.category}</span>
-          <h3>${v.year} ${v.model}</h3>
-          <div class="specs">
-            <span>${v.engine||'Engine N/A'}</span>
-            <span>•</span>
-            <span>${v.drive||'Drive N/A'}</span>
-          </div>
-          <div class="price">
-            <strong>${v.sold?'SOLD':'$'+Number(v.price).toLocaleString()}</strong>
-            <span>${Number(v.mileage).toLocaleString()} MI</span>
-          </div>
-          ${v.sold?'':'<button class="btn primary" style="width:100%;margin-top:16px" onclick="openOrder('+v.id+')">Order This Vehicle →</button>'}
-        </div>
-      </article>
-    `).join('');
-  }
-
-  // Update headers and dealership info
-  document.querySelector('.logoText').childNodes[0].textContent = settings.name.toUpperCase() + ' ';
-  document.querySelector('.hero h1').innerHTML = settings.hero.replace(/\. /g,'.<br>');
-  document.querySelector('.hero p').textContent = settings.desc;
-  document.querySelector('.footerCol a[href^="tel:"]').textContent = settings.phone;
-  document.querySelector('.footerCol a[href^="mailto:"]').textContent = settings.phone;
-}
-
-function openOrder(id){
-  const v=inventory.find(x=>x.id===id);
-  if(!v||v.sold)return;
-  document.getElementById('orderVehicleId').value=id;
-  document.getElementById('orderSummary').innerHTML=`<strong>${v.year} ${escapeHtml(v.make)} ${escapeHtml(v.model)}</strong><br><span style="color:#9da7b5">$${Number(v.price).toLocaleString()} • ${Number(v.mileage).toLocaleString()} mi</span>`;
-  document.getElementById('orderName').value='';
-  document.getElementById('orderDiscord').value='';
-  document.getElementById('orderNotes').value='';
-  document.getElementById('orderStatus').textContent='';
-  document.getElementById('orderOverlay').classList.add('open');
-  document.getElementById('orderDiscord').focus();
-}
-
-function closeOrder(){document.getElementById('orderOverlay').classList.remove('open')}
-
-document.getElementById('orderForm').addEventListener('submit',e=>{
-  e.preventDefault();
-  const id=Number(document.getElementById('orderVehicleId').value),v=inventory.find(x=>x.id===id);
-  if(!v||v.sold){
-    document.getElementById('orderStatus').textContent='This vehicle is no longer available.';
-    return;
-  }
-  const o={
-    id:Date.now(),
-    vehicleId:id,
-    vehicleName:`${v.year} ${v.make} ${v.model}`,
-    name:document.getElementById('orderName').value.trim(),
-    discord:document.getElementById('orderDiscord').value.trim(),
-    notes:document.getElementById('orderNotes').value.trim(),
-    createdAt:new Date().toISOString(),
-    status:'new'
-  };
-  if(!o.discord){
-    document.getElementById('orderStatus').textContent='Discord name is required.';
-    return;
-  }
-  orders.push(o);
-  save();
-  document.getElementById('orderStatus').textContent='Order submitted successfully.';
-  setTimeout(closeOrder,900);
-});
-
-function closeOrderAdmin(id){const o=orders.find(x=>x.id===id);if(o){o.status='closed';save();toast('Order marked closed.')}}
-function reopenOrder(id){const o=orders.find(x=>x.id===id);if(o){o.status='new';save();toast('Order reopened.')}}
-function deleteOrder(id){if(confirm('Delete this customer order?')){orders=orders.filter(x=>x.id!==id);save();toast('Order deleted.')}}
-function copyDiscord(encoded){navigator.clipboard?.writeText(decodeURIComponent(encoded));toast('Discord name copied.')}
-
-function exportData(){
-  const blob=new Blob([JSON.stringify({inventory,settings,orders},null,2)],{type:'application/json'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download='northstar-dealership-data.json';
-  a.click();
-  URL.revokeObjectURL(a.href);
-}
-
-document.getElementById('adminBtn').onclick=openAdmin;
-
-// Initialize app
-setupFilterListeners();
-renderPublic();
-</script>
 </body>
 </html>
