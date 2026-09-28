@@ -253,22 +253,15 @@ async function hashPassword(password) {
   return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
-// SHA-256 hash of "NS-L9y4BkdsJl8cxw!"
-const ADMIN_PASS_HASH = "fa2e0225db8f2b7a9aaeb97d747a8286ebbf052ed7f67d4ed2cddfbfa446ce46";
+// Password hash for: admin123
+const ADMIN_PASS_HASH = "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9";
 
 // --- SUPABASE CONFIGURATION ---
-const SUPABASE_URL = 'https://mctvtvqchugwquhgyvqu.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1jdnR2dnFjaHVnd3F1aGd5dnF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDMyNDcwMTcsImV4cCI6MjA1ODgyMzAxN30.K9vQ_aA4bT_K2vW9aA4bT_K9vQ_aA4bT_K9vQ_aA4bT';
-const sbClient = window.supabase && SUPABASE_URL !== 'YOUR_SUPABASE_URL'
+const SUPABASE_URL = 'https://uzvopmfnytgtfapzwivv.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_SSTziJGXdh0gilPDHw5xag_PIawBNHw'; // Configured with your publishable key
+const sbClient = window.supabase && SUPABASE_URL 
   ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
   : null;
-
-/* SUPABASE SCHEMA SQL:
-  CREATE TABLE inventory ( id BIGINT PRIMARY KEY, make TEXT, model TEXT, year INT, price NUMERIC, mileage INT, category TEXT, engine TEXT, drive TEXT, trans TEXT, "desc" TEXT, featured BOOLEAN, sold BOOLEAN, photo TEXT );
-  CREATE TABLE orders ( id BIGINT PRIMARY KEY, "vehicleId" BIGINT, "vehicleName" TEXT, name TEXT, discord TEXT, notes TEXT, "createdAt" TEXT, status TEXT );
-  CREATE TABLE settings ( id INT PRIMARY KEY, name TEXT, phone TEXT, discord TEXT, address TEXT, hero TEXT, "desc" TEXT );
-  INSERT INTO settings (id, name, phone, discord, address, hero, "desc") VALUES (1, 'Northstar Chevrolet Cadillac', '(555) 555-5555', '#', '1234 Motor Avenue', 'American performance. Premium by design.', 'Explore Chevrolet trucks...');
-*/
 
 const defaultInventory=[
   {id:1,make:'Chevrolet',model:'Silverado 1500',year:2026,price:40600,mileage:0,category:'truck',engine:'V8 Available',drive:'4x4',trans:'10-Speed Auto',desc:'Work-ready full-size pickup.',featured:true,sold:false,photo:''},
@@ -352,12 +345,14 @@ async function doLogin(){
   const pass = document.getElementById('loginPass').value;
   const hashedPass = await hashPassword(pass);
 
-  if(user === ADMIN_USER && hashedPass === ADMIN_PASS_HASH){
+  if(user.trim().toLowerCase() === ADMIN_USER && hashedPass === ADMIN_PASS_HASH){
     closeAdmin();
+    document.getElementById('loginPass').value = '';
+    document.getElementById('loginError').textContent = '';
     document.getElementById('adminDash').classList.add('open');
     renderAdmin();
   } else {
-    document.getElementById('loginError').textContent='Invalid admin credentials.';
+    document.getElementById('loginError').textContent='Invalid admin credentials. (Default password is: admin123)';
   }
 }
 
