@@ -258,8 +258,8 @@ const ADMIN_PASS_HASH = "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809
 
 // --- SUPABASE CONFIGURATION ---
 const SUPABASE_URL = 'https://uzvopmfnytgtfapzwivv.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_SSTziJGXdh0gilPDHw5xag_PIawBNHw'; // Configured with your publishable key
-const sbClient = window.supabase && SUPABASE_URL 
+const SUPABASE_ANON_KEY = 'sb_publishable_SSTziJGXdh0gilPDHw5xag_PIawBNHw';
+const sbClient = window.supabase && SUPABASE_URL && SUPABASE_ANON_KEY
   ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
   : null;
 
